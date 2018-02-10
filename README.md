@@ -70,6 +70,10 @@ is the IP address of the Host OS.
 ```python
 pydevd.settrace('192.168.1.220', port=6700, stdoutToServer=True, stderrToServer=True)
 ```
+3. Launch the simulator in the host. 
+4. In PyCharm launch the debugger. 
+5. If in the second terminal you have already launch the styx node, do a CTRL-C and then relaunch. 
+6. Repeat 4 and 5 for every debug session. 
 
 #### Installation Instructions by Udacity
 
