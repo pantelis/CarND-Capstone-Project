@@ -54,7 +54,7 @@ class WaypointUpdater(object):
     def pose_cb(self, msg):
 
         # TODO: Implement
-        pydevd.settrace('135.222.156.85', port=6700, stdoutToServer=True, stderrToServer=True)
+        pydevd.settrace('192.168.1.220', port=6700, stdoutToServer=True, stderrToServer=True)
         pose = msg.msg
         rospy.loginfo("Pose message Rx = ", pose)
         pass
