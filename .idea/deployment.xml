@@ -5,7 +5,7 @@
       <paths name="udacity-vm">
         <serverdata>
           <mappings>
-            <mapping deploy="/home/student/CarND-Capstone-Project/ros/src/waypoint_updater" local="$PROJECT_DIR$/ros/src/waypoint_updater" web="/" />
+            <mapping deploy="/home/student/CarND-Capstone-Project/" local="$PROJECT_DIR$/" web="/" />
           </mappings>
           <excludedPaths>
             <excludedPath path="/home/student/CarND-Capstone-Project/ros/build" />

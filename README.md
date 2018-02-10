@@ -14,7 +14,9 @@ After cloning the project and opening it up in PyCharm Pro you need to:
 3. Configure Port Forwarding in Virtualbox as shown in ![vb](/imgs/virtualbox_settings.png "Virtualbox Port Forwarding")
 4. In PyCharm define a Deployment configuration as shown in 
 ![pycharm-dep1](/imgs/pycharm_deployment_config.png "PyCharm Deployment Config") and set the path mappings appropriately. 
-![pycharm-dep2](/imgs/pycharm_deployment_dir_mappings.png "PyCharm Dir Mapping Config") 
+![pycharm-dep2](/imgs/pycharm_deployment_dir_mappings.png "PyCharm Dir Mapping Config") Please note that the path mappings shown 
+are for the specific package and that you may set them differently in your environment to map the 
+root dir of the repo. 
 5. In PyCharm define a Run Configuration as shown in 
 ![pycharm-run](/imgs/pycharm_run_configuration.png "PyCharm Run Config") 
 6. Copy from your Host Pycharm installation directory the pycharm-debug.egg (for MACOS High Sierra this is already done)
