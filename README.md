@@ -14,7 +14,7 @@ After cloning the project and opening it up in PyCharm Pro you need to:
 ![pycharm-dep1](/imgs/pycharm_deployment_config.png "PyCharm Deployment Config") and set the path mappings appropriately. 
 ![pycharm-dep2](/imgs/pycharm_deployment_dir_mappings.png "PyCharm Dir Mapping Config") 
 5. In PyCharm define a Run Configuration as shown in 
-![pycharm-run](/imgs/pycharm_run_configuration.png "PyCharm Run Config") and 
+![pycharm-run](/imgs/pycharm_run_configuration.png "PyCharm Run Config") 
 6. Copy from your Host Pycharm installation directory the pycharm-debug.egg (for MACOS High Sierra this is already done)
 into a dir under the root directory of this repo).  
 
