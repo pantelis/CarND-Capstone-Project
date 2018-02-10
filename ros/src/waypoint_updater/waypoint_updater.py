@@ -2,9 +2,19 @@
 
 import sys
 
-sys.path.append('/home/student/CarND-Capstone-Project/ros/pycharm-debug.egg')
-
+# The following lines are specific to Pycharm Remote Debugging configuration (pydev) that allows
+# the host os to run the IDE and the Simulator and the remote Ubuntu VM to run ROS.
+if platform == "darwin":
+    # OSX
+    sys.path.append('/home/student/CarND-Capstone-Project/macos/pycharm-debug.egg')
+elif platform == "linux" or platform == "linux2":
+    # linux
+    sys.path.append('')
+# elif platform == "win32":
+#     # Windows
+#     sys.path.append('/home/student/CarND-Capstone-Project/ros/win/pycharm-debug.egg')
 import pydevd
+
 import rospy
 from geometry_msgs.msg import PoseStamped
 from styx_msgs.msg import Lane, Waypoint

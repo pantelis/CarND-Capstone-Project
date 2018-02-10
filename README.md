@@ -15,7 +15,7 @@ After cloning the project and opening it up in PyCharm Pro you need to:
 5. In PyCharm define a Run Configuration as shown in 
 ![pycharm-run](/imgs/pycharm_run_config.png "PyCharm Run Config") and 
 6. Copy from your Host Pycharm installation directory the pycharm-debug.egg (for MACOS High Sierra this is already done)
-into the /ros/macos directory of this repo) 
+into a dir under the root directory of this repo).  
 
 #### Installation Instructions by Udacity
 
