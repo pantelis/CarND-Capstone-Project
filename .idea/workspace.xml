@@ -2,11 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="190eaf17-35d2-46d8-b977-1ac1c8fd8f8f" name="Default" comment="">
-      <change beforePath="" afterPath="$PROJECT_DIR$/imgs/pycharm_deployment_config.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/imgs/pycharm_deployment_dir_mappings.png" />
-      <change beforePath="" afterPath="$PROJECT_DIR$/imgs/pycharm_run_configuration.png" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change beforePath="$PROJECT_DIR$/ros/src/waypoint_updater/waypoint_updater.py" afterPath="$PROJECT_DIR$/ros/src/waypoint_updater/waypoint_updater.py" />
     </list>
     <list id="94125bf0-3294-4ed8-aeb7-2546855c7177" name="Optional" comment="">
       <change beforePath="" afterPath="$PROJECT_DIR$/.idea/other.xml" />
@@ -383,6 +379,14 @@
       <option name="presentableId" value="Default" />
       <updated>1517703420611</updated>
     </task>
+    <task id="LOCAL-00001" summary="updated with figures to properly configure pycharm pro">
+      <created>1518282229458</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1518282229458</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -420,6 +424,10 @@
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="updated with figures to properly configure pycharm pro" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated with figures to properly configure pycharm pro" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
