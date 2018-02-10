@@ -7,17 +7,42 @@
 After cloning the project and opening it up in PyCharm Pro you need to:
 
 1. Clone the project in the host. 
-2. Download Ubuntu VM
+2. Download Ubuntu VM and configure the Guest Additions for MACOS according to 
+[these](https://gist.github.com/pantelis/f8987db8967d738f64c4bf7136ac6a84) instructions. 
 3. Configure Port Forwarding in Virtualbox as shown in ![vb](/imgs/virtualbox_settings.png "Virtualbox Port Forwarding")
 4. In PyCharm define a Deployment configuration as shown in 
-![pycharm-dep1](/imgs/pycharm_deployment_config.png "PyCharm Deployment Config") and 
+![pycharm-dep1](/imgs/pycharm_deployment_config.png "PyCharm Deployment Config") and set the path mappings appropriately. 
 ![pycharm-dep2](/imgs/pycharm_deployment_dir_mappings.png "PyCharm Dir Mapping Config") 
 5. In PyCharm define a Run Configuration as shown in 
 ![pycharm-run](/imgs/pycharm_run_configuration.png "PyCharm Run Config") and 
 6. Copy from your Host Pycharm installation directory the pycharm-debug.egg (for MACOS High Sierra this is already done)
 into a dir under the root directory of this repo).  
 
-We are now ready to launch 
+If the above steps are executed correctly we can now deploy the project into the VM by selecting the 
+project and going to Tools -> Deployment -> Upload to udacity-vm 
+
+We are now ready to launch three terminals. In the first terminal we will be running the main 
+ros process roscore
+```commandline
+cd CarND-Capstone-Project/ros
+source devel/setup.bash
+roscore
+```
+
+In the second terminal we will be launching the main package:
+```commandline
+cd CarND-Capstone-Project/ros
+catkin_make
+source devel/setup.bash
+roslaunch launch/styx.launch
+```
+
+We will use the 3rd terminal for any other ros commands or to inspect messages and logs. 
+```commandline
+cd CarND-Capstone-Project/ros
+source devel/setup.bash
+```
+
 #### Installation Instructions by Udacity
 
 This is the project repo for the final project of the Udacity Self-Driving Car Nanodegree: Programming a Real Self-Driving Car. For more information about the project, see the project introduction [here](https://classroom.udacity.com/nanodegrees/nd013/parts/6047fe34-d93c-4f50-8336-b70ef10cb4b2/modules/e1a23b06-329a-4684-a717-ad476f0d8dff/lessons/462c933d-9f24-42d3-8bdc-a08a5fc866e4/concepts/5ab4b122-83e6-436d-850f-9f4d26627fd9).
