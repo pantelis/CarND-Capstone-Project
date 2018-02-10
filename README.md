@@ -2,8 +2,10 @@
 
 
 ### Development Environment Setup
+This setup involves remote debugging of the code running in the ROS Ubuntu VM from a host OS that also runs the simulator.
 
 #### PyCharm-Pro based Dev Environment (MACOS host and Virtualbox VM).
+We are following the steps [here](https://www.jetbrains.com/help/pycharm/remote-debugging.html) but adapt them for this project.
 After cloning the project and opening it up in PyCharm Pro you need to:
 
 1. Clone the project in the host. 
@@ -41,6 +43,32 @@ We will use the 3rd terminal for any other ros commands or to inspect messages a
 ```commandline
 cd CarND-Capstone-Project/ros
 source devel/setup.bash
+```
+
+Steps for remote debugging (using waypoint_updater.py as example)
+
+1. In your python script for the ROS package of interest include the following code that :
+```python
+import sys
+
+# The following lines are specific to Pycharm Remote Debugging configuration (pydev) that allows
+# the host os to run the IDE and the Simulator and the remote Ubuntu VM to run ROS.
+if platform == "darwin":
+    # OSX
+    sys.path.append('/home/student/CarND-Capstone-Project/macos/pycharm-debug.egg')
+elif platform == "linux" or platform == "linux2":
+    # linux
+    sys.path.append('')
+# elif platform == "win32":
+#     # Windows
+#     sys.path.append('/home/student/CarND-Capstone-Project/ros/win/pycharm-debug.egg')
+import pydevd
+```
+2. In the same script in the line of interest, include the following line. Note that this line 
+is the one quoted by PyCharm in the Run Configurations config step and the IP address shown 
+is the IP address of the Host OS. 
+```python
+pydevd.settrace('192.168.1.220', port=6700, stdoutToServer=True, stderrToServer=True)
 ```
 
 #### Installation Instructions by Udacity
