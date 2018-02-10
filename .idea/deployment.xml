@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" serverName="udacity-vm">
+    <serverData>
+      <paths name="udacity-vm">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/home/student/CarND-Capstone-Project/ros/src/waypoint_updater" local="$PROJECT_DIR$/ros/src/waypoint_updater" web="/" />
+          </mappings>
+          <excludedPaths>
+            <excludedPath path="/home/student/CarND-Capstone-Project/ros/build" />
+          </excludedPaths>
+        </serverdata>
+      </paths>
+    </serverData>
+  </component>
+</project>
