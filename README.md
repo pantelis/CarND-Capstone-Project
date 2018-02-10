@@ -1,15 +1,29 @@
-# Autonomly.io Capstone Project Implementation
-
-# Installation Instructions for PyCharm Pro based Dev Environment with MACOS/Linux host and Virtualbox VM.
+# Autonomly.io Capstone Project
 
 
-# Installation Instructions by Udacity
+### Development Environment Setup
+
+#### PyCharm-Pro based Dev Environment (MACOS host and Virtualbox VM).
+After cloning the project and opening it up in PyCharm Pro you need to:
+
+1. Clone the project in the host. 
+2. Download Ubuntu VM
+3. Configure Port Forwarding in Virtualbox as shown in ![vb](/imgs/virtualbox_settings.png "Virtualbox Port Forwarding")
+4. In PyCharm define a Deployment configuration as shown in 
+![pycharm-dep1](/imgs/pycharm_deployment_config.png "PyCharm Deployment Config") and 
+![pycharm-dep2](/imgs/pycharm_deployment_dir_mapping.png "PyCharm Dir Mapping Config") 
+5. In PyCharm define a Run Configuration as shown in 
+![pycharm-run](/imgs/pycharm_run_config.png "PyCharm Run Config") and 
+6. Copy from your Host Pycharm installation directory the pycharm-debug.egg (for MACOS High Sierra this is already done)
+into the /ros/macos directory of this repo) 
+
+#### Installation Instructions by Udacity
 
 This is the project repo for the final project of the Udacity Self-Driving Car Nanodegree: Programming a Real Self-Driving Car. For more information about the project, see the project introduction [here](https://classroom.udacity.com/nanodegrees/nd013/parts/6047fe34-d93c-4f50-8336-b70ef10cb4b2/modules/e1a23b06-329a-4684-a717-ad476f0d8dff/lessons/462c933d-9f24-42d3-8bdc-a08a5fc866e4/concepts/5ab4b122-83e6-436d-850f-9f4d26627fd9).
 
 Please use **one** of the two installation options, either native **or** docker installation.
 
-### Native Installation
+#### Native Installation
 
 * Be sure that your workstation is running Ubuntu 16.04 Xenial Xerus or Ubuntu 14.04 Trusty Tahir. [Ubuntu downloads can be found here](https://www.ubuntu.com/download/desktop).
 * If using a Virtual Machine to install Ubuntu, use the following configuration as minimum:
