@@ -22,8 +22,9 @@ import math
 import numpy as np
 from scipy.spatial import distance
 
-#pydevd.settrace('192.168.1.220', port=6700, stdoutToServer=True, stderrToServer=True)
-pydevd.settrace('135.222.156.1', port=6700, stdoutToServer=True, stderrToServer=True)
+
+pydevd.settrace('192.168.1.224', port=6700, stdoutToServer=True, stderrToServer=True)
+
 
 '''
 This node will publish waypoints from the car's current position to some `x` distance ahead.
@@ -64,57 +65,55 @@ class WaypointUpdater(object):
         # rospy will simply drop any messages beyond the queue_size.
         self.final_waypoints_pub = rospy.Publisher('final_waypoints', Lane, queue_size=1)
 
-        # TODO: Add other member variables you need below
-        self.num_waypoints = 0
-        self.base_waypoints = []
-        self.base_waypoints_position = np.empty
-        self.base_waypoints_orientation = np.empty
-        self.current_pose_position = np.empty
-        self.current_pose_orientation = np.empty
+        # Other member variables we need below
+        self.current_pose_position = np.zeros([1, 3])
+        self.current_pose_orientation = np.zeros([1, 4])
 
-        self.closest_waypoint_index = 0
 
         # We give control over to ROS by calling rospy.spin().  This function will only return when the node is ready to
         # shutdown. This is just a useful shortcut to avoid having to define a top-level while loop.
         rospy.spin()
 
     def pose_cb(self, msg):
+        '''Current pose callback'''
 
-        # TODO: Implement
+        #rospy.loginfo(msg)
 
         pose_position = msg.pose.position
         pose_orientation = msg.pose.orientation
 
-        self.current_pose_position = np.array([pose_position.x, pose_position.y, pose_position.z])
-        self.current_pose_orientation = np.array([pose_orientation.x, pose_orientation.y, pose_orientation.z, pose_orientation.w])
+        self.current_pose_position = np.array([[pose_position.x, pose_position.y, pose_position.z]])
+        self.current_pose_orientation = np.array([[pose_orientation.x, pose_orientation.y, pose_orientation.z, pose_orientation.w]])
 
-        # rate = rospy.Rate(1)
-        # rospy.loginfo(rate, pose)
+
         pass
 
     def waypoints_cb(self, waypoints):
-        # TODO: Implement
+        '''Base waypoints callback'''
 
-        # populate the numpy arrays that are needed for calculating the closest waypoint.
+        # rospy.loginfo(waypoints.waypoints)
 
-        # rospy.loginfo(waypoints)
         # get the number of base waypoints
         self.num_waypoints = len(waypoints.waypoints)
+
         self.base_waypoints = waypoints
+        self.base_waypoints_position = np.zeros([self.num_waypoints, 3])
+        self.base_waypoints_orientation = np.zeros([self.num_waypoints, 4])
 
-        base_waypoints_position = []
-        base_waypoints_orientation = []
-        for i in waypoints.waypoints:
-            base_waypoints_position.append([i.pose.pose.position.x, i.pose.pose.position.y,
-                                                 i.pose.pose.position.z])
-        for j in waypoints.waypoints:
-            base_waypoints_orientation.append([j.pose.pose.orientation.x, j.pose.pose.orientation.y,
-                                                    j.pose.pose.orientation.z, j.pose.pose.orientation.w])
 
-        # convert the list into np arrays - this will allow us to use very efficient KD-Tree algs for
-        # estimating the distance
-        self.base_waypoints_position = np.asarray(base_waypoints_position)
-        self.base_waypoints_orientation = np.asarray(base_waypoints_orientation)
+        k=0
+        for wp in waypoints.waypoints:
+            self.base_waypoints_position[k] = [wp.pose.pose.position.x, wp.pose.pose.position.y, wp.pose.pose.position.z]
+            k += 1
+
+        k=0
+        for wp in waypoints.waypoints:
+            self.base_waypoints_orientation[k] =[wp.pose.pose.orientation.x, wp.pose.pose.orientation.y,
+                                                    wp.pose.pose.orientation.z, wp.pose.pose.orientation.w]
+            k += 1
+
+        # calculate and publish the final waypoints
+        self.final_waypoints_publisher(waypoints)
 
         pass
 
@@ -126,28 +125,27 @@ class WaypointUpdater(object):
         # TODO: Callback for /obstacle_waypoint message. We will implement it later
         pass
 
-    def final_waypoints_publisher(self):
+    def final_waypoints_publisher(self, waypoints):
 
-        look_ahead_waypoints = Lane()
+        closest_waypoint_indx = distance.cdist(XA=self.current_pose_position, XB=self.base_waypoints_position,
+                                               metric='euclidean', p=2).argmin()
 
-        closest_waypoint_indx = self.closest_waypoint_index
+        # create the look_ahead waypoints anc consider the wrap around in closed tracks
+        self.look_ahead_waypoints = Lane()
 
-        for i in range(0, LOOKAHEAD_WPS-1):
-            look_ahead_waypoints.waypoints.append(self.base_waypoints[closest_waypoint_indx + i])
+        for i in range(0, LOOKAHEAD_WPS):
+            self.look_ahead_waypoints.waypoints.append(
+                self.base_waypoints.waypoints[(closest_waypoint_indx + i) % self.num_waypoints])
 
-        for i in range(0, LOOKAHEAD_WPS-1):
-            self.set_waypoint_velocity(look_ahead_waypoints, i, 5.0)
+        for i in range(0, LOOKAHEAD_WPS):
+            self.set_waypoint_velocity(self.look_ahead_waypoints.waypoints, i, 5.0)
 
-        self.final_waypoints_pub.publish(look_ahead_waypoints)
+        rospy.loginfo(self.look_ahead_waypoints)
+
+        self.final_waypoints_pub.publish(self.look_ahead_waypoints)
 
         pass
 
-    def closest_waypoint_index(self):
-
-        closest_waypoint_indx = distance.cdist(self.current_pose_position, self.base_waypoints_position,
-                                                'euclidean', p=2)
-
-        return closest_waypoint_indx
 
     def get_waypoint_velocity(self, waypoint):
 
@@ -156,6 +154,8 @@ class WaypointUpdater(object):
     def set_waypoint_velocity(self, waypoints, waypoint, velocity):
 
         waypoints[waypoint].twist.twist.linear.x = velocity
+
+    pass
 
     def ramped_velocity(v_prev, v_target, t_prev, t_now, ramp_rate):
 
@@ -170,6 +170,8 @@ class WaypointUpdater(object):
             return v_target
         else:
             return v_prev + sign * step  # take a step toward the target
+
+    pass
 
     def distance(self, waypoints, wp1, wp2):
 
