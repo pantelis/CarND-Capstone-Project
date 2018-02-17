@@ -21,8 +21,88 @@
       <file leaf-file-name="waypoint_updater.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/ros/src/waypoint_updater/waypoint_updater.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="199">
-              <caret line="146" column="12" lean-forward="false" selection-start-line="146" selection-start-column="12" selection-end-line="146" selection-end-column="12" />
+            <state relative-caret-position="-515">
+              <caret line="220" column="0" lean-forward="true" selection-start-line="220" selection-start-column="0" selection-end-line="220" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="light_publisher.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/ros/src/tl_detector/light_publisher.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="tl_detector.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/ros/src/tl_detector/tl_detector.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="30">
+              <caret line="2" column="30" lean-forward="true" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="30" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Waypoint.msg" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/ros/src/styx_msgs/msg/Waypoint.msg">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="30">
+              <caret line="2" column="0" lean-forward="false" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="Lane.msg" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/ros/src/styx_msgs/msg/Lane.msg">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TrafficLight.msg" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/ros/src/styx_msgs/msg/TrafficLight.msg">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="15">
+              <caret line="1" column="30" lean-forward="false" selection-start-line="1" selection-start-column="26" selection-end-line="1" selection-end-column="30" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TrafficLightArray.msg" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/ros/src/styx_msgs/msg/TrafficLightArray.msg">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="0">
+              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="styx.launch" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/ros/launch/styx.launch">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="270">
+              <caret line="18" column="57" lean-forward="false" selection-start-line="18" selection-start-column="46" selection-end-line="18" selection-end-column="57" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="waypoint_loader.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/ros/src/waypoint_loader/waypoint_loader.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="990">
+              <caret line="75" column="39" lean-forward="false" selection-start-line="75" selection-start-column="39" selection-end-line="75" selection-end-column="39" />
               <folding />
             </state>
           </provider>
@@ -48,8 +128,8 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="ProjectFrameBounds">
-    <option name="x" value="-2" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="-1" />
     <option name="y" value="23" />
     <option name="width" value="1680" />
     <option name="height" value="1027" />
@@ -90,6 +170,7 @@
     </navigator>
     <panes>
       <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -124,13 +205,48 @@
               <item name="CarND-Capstone-Project" type="462c0819:PsiDirectoryNode" />
               <item name="ros" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="styx_msgs" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CarND-Capstone-Project" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CarND-Capstone-Project" type="462c0819:PsiDirectoryNode" />
+              <item name="ros" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="styx_msgs" type="462c0819:PsiDirectoryNode" />
+              <item name="msg" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CarND-Capstone-Project" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CarND-Capstone-Project" type="462c0819:PsiDirectoryNode" />
+              <item name="ros" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="tl_detector" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CarND-Capstone-Project" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CarND-Capstone-Project" type="462c0819:PsiDirectoryNode" />
+              <item name="ros" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="twist_controller" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CarND-Capstone-Project" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CarND-Capstone-Project" type="462c0819:PsiDirectoryNode" />
+              <item name="ros" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="waypoint_loader" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="CarND-Capstone-Project" type="b2602c69:ProjectViewProjectNode" />
+              <item name="CarND-Capstone-Project" type="462c0819:PsiDirectoryNode" />
+              <item name="ros" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="waypoint_updater" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -142,6 +258,9 @@
     <property name="WebServerToolWindowPanel.toolwindow.show.permissions" value="false" />
     <property name="WebServerToolWindowPanel.toolwindow.highlight.symlinks" value="true" />
     <property name="WebServerToolWindowPanel.toolwindow.highlight.mappings" value="true" />
+  </component>
+  <component name="PyDebuggerOptionsProvider">
+    <option name="mySaveCallSignatures" value="true" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -338,6 +457,9 @@
   <component name="ShelveChangesManager" show_recycled="false">
     <option name="remove_strategy" value="false" />
   </component>
+  <component name="StructureViewFactory">
+    <option name="AUTOSCROLL_FROM_SOURCE" value="true" />
+  </component>
   <component name="SvnConfiguration">
     <configuration>$USER_HOME$/.subversion</configuration>
   </component>
@@ -448,27 +570,34 @@
       <option name="project" value="LOCAL" />
       <updated>1518559593238</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="updated README.">
+      <created>1518732106177</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1518732106179</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-2" y="23" width="1680" height="1027" extended-state="0" />
+    <frame x="0" y="23" width="1680" height="1027" extended-state="6" />
     <layout>
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.36193618" sideWeight="0.33211234" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.36853686" sideWeight="0.33516484" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32893288" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32893288" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.40264025" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3278328" sideWeight="0.490232" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32893288" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32893288" sideWeight="0.497558" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.13296704" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.12698413" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.15628816" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Docker" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="SciView" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32967034" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24969475" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.36853686" sideWeight="0.66483516" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.36193618" sideWeight="0.6678877" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -523,65 +652,15 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/ros/src/waypoint_updater/waypoint_updater.py</url>
-          <line>144</line>
-          <option name="timeStamp" value="20" />
+          <line>217</line>
+          <option name="timeStamp" value="27" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="21" />
+      <option name="time" value="28" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/data/sim_waypoints.csv">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/wp_yaw.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ros/src/waypoint_updater/waypoint_updater.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="30">
-          <caret line="2" column="12" lean-forward="true" selection-start-line="2" selection-start-column="12" selection-end-line="2" selection-end-column="12" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/wp_yaw_const.csv">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ros/src/styx/conf.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ros/src/styx/bridge.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ros/src/twist_controller/dbw_node.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/ros/src/styx/launch/server.launch">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -765,38 +844,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ros/src/styx_msgs/msg/TrafficLightArray.msg">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ros/src/styx_msgs/msg/TrafficLight.msg">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ros/src/waypoint_loader/waypoint_loader.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1125">
-          <caret line="75" column="39" lean-forward="true" selection-start-line="75" selection-start-column="39" selection-end-line="75" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/data/sim_waypoints.csv">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/ros/launch/styx.launch">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="270">
-          <caret line="18" column="57" lean-forward="false" selection-start-line="18" selection-start-column="46" selection-end-line="18" selection-end-column="57" />
         </state>
       </provider>
     </entry>
@@ -820,14 +871,6 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/ros/src/tl_detector/light_publisher.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/.idea/workspace.xml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-27">
@@ -846,7 +889,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -856,18 +898,48 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/README.md">
+      <provider editor-type-id="text-editor">
+        <state relative-caret-position="90">
+          <caret line="6" column="0" lean-forward="true" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
+        </state>
+      </provider>
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="246">
             <caret line="51" column="0" lean-forward="true" selection-start-line="51" selection-start-column="0" selection-end-line="51" selection-end-column="0" />
-            <folding />
           </first_editor>
           <second_editor />
         </state>
       </provider>
-      <provider editor-type-id="text-editor">
-        <state relative-caret-position="90">
-          <caret line="6" column="0" lean-forward="true" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ros/launch/styx.launch">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="18" column="57" lean-forward="false" selection-start-line="18" selection-start-column="46" selection-end-line="18" selection-end-column="57" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ros/src/waypoint_loader/waypoint_loader.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="990">
+          <caret line="75" column="39" lean-forward="false" selection-start-line="75" selection-start-column="39" selection-end-line="75" selection-end-column="39" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ros/src/styx_msgs/msg/TrafficLightArray.msg">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ros/src/styx_msgs/msg/TrafficLight.msg">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="15">
+          <caret line="1" column="30" lean-forward="false" selection-start-line="1" selection-start-column="26" selection-end-line="1" selection-end-column="30" />
           <folding />
         </state>
       </provider>
@@ -888,10 +960,136 @@
         </state>
       </provider>
     </entry>
+    <entry file="uml://JavaScript-modules-diagram//Users/pantelis/Projects/CarND/CarND-Capstone-Project">
+      <provider selected="true" editor-type-id="UmlEditorProvider">
+        <state>
+          <ID>JavaScript-modules-diagram</ID>
+          <OriginalElement>$PROJECT_DIR$</OriginalElement>
+          <nodes />
+          <notes />
+          <edges />
+          <settings layout="Hierarchic Group" zoom="1.0" x="691.0" y="681.0" />
+          <SelectedNodes />
+          <Categories>
+            <Category>All</Category>
+          </Categories>
+          <VISIBILITY>Details</VISIBILITY>
+        </state>
+      </provider>
+    </entry>
+    <entry file="uml://Python/ros.src.waypoint_updater.waypoint_updater.WaypointUpdater">
+      <provider selected="true" editor-type-id="UmlEditorProvider">
+        <state>
+          <ID>Python</ID>
+          <OriginalElement>ros.src.waypoint_updater.waypoint_updater.WaypointUpdater</OriginalElement>
+          <nodes>
+            <node x="" y="">ros.src.waypoint_updater.waypoint_updater.WaypointUpdater</node>
+            <node x="" y="">_abcoll.Hashable</node>
+            <node x="" y="">object</node>
+          </nodes>
+          <notes />
+          <edges />
+          <settings layout="Hierarchic Group" zoom="1.0" x="208.0" y="134.0" />
+          <SelectedNodes />
+          <Categories>
+            <Category>Methods</Category>
+          </Categories>
+        </state>
+      </provider>
+    </entry>
+    <entry file="uml://JavaScript-modules-diagram//Users/pantelis/Projects/CarND/CarND-Capstone-Project/ros/src/styx_msgs;/Users/pantelis/Projects/CarND/CarND-Capstone-Project/ros/src/styx;/Users/pantelis/Projects/CarND/CarND-Capstone-Project/ros/src/camera_info_publisher;/Users/pantelis/Projects/CarND/CarND-Capstone-Project/ros/src/tl_detector;/Users/pantelis/Projects/CarND/CarND-Capstone-Project/ros/src/twist_controller;/Users/pantelis/Projects/CarND/CarND-Capstone-Project/ros/src/waypoint_follower;/Users/pantelis/Projects/CarND/CarND-Capstone-Project/ros/src/waypoint_loader;/Users/pantelis/Projects/CarND/CarND-Capstone-Project/ros/src/waypoint_updater;">
+      <provider selected="true" editor-type-id="UmlEditorProvider">
+        <state>
+          <ID>JavaScript-modules-diagram</ID>
+          <OriginalElement>$PROJECT_DIR$/ros/src/styx_msgs;/Users/pantelis/Projects/CarND/CarND-Capstone-Project/ros/src/styx;/Users/pantelis/Projects/CarND/CarND-Capstone-Project/ros/src/camera_info_publisher;/Users/pantelis/Projects/CarND/CarND-Capstone-Project/ros/src/tl_detector;/Users/pantelis/Projects/CarND/CarND-Capstone-Project/ros/src/twist_controller;/Users/pantelis/Projects/CarND/CarND-Capstone-Project/ros/src/waypoint_follower;/Users/pantelis/Projects/CarND/CarND-Capstone-Project/ros/src/waypoint_loader;/Users/pantelis/Projects/CarND/CarND-Capstone-Project/ros/src/waypoint_updater;</OriginalElement>
+          <nodes />
+          <notes />
+          <edges />
+          <settings layout="Hierarchic Group" zoom="1.0" x="706.0" y="1481.0" />
+          <SelectedNodes />
+          <Categories>
+            <Category>All</Category>
+          </Categories>
+          <VISIBILITY>Details</VISIBILITY>
+        </state>
+      </provider>
+    </entry>
+    <entry file="uml://Python/#/Users/pantelis/Projects/CarND/CarND-Capstone-Project/ros/src/waypoint_loader/waypoint_loader.py">
+      <provider selected="true" editor-type-id="UmlEditorProvider">
+        <state>
+          <ID>Python</ID>
+          <OriginalElement>#/Users/pantelis/Projects/CarND/CarND-Capstone-Project/ros/src/waypoint_loader/waypoint_loader.py</OriginalElement>
+          <nodes>
+            <node x="" y="">_abcoll.Hashable</node>
+            <node x="" y="">object</node>
+            <node x="" y="">ros.src.waypoint_loader.waypoint_loader.WaypointLoader</node>
+          </nodes>
+          <notes />
+          <edges />
+          <settings layout="Hierarchic Group" zoom="0.5852017937219731" x="194.78927203065132" y="376.0" />
+          <SelectedNodes />
+          <Categories>
+            <Category>Methods</Category>
+            <Category>Inner Classes</Category>
+            <Category>Fields</Category>
+          </Categories>
+        </state>
+      </provider>
+    </entry>
+    <entry file="uml://JavaScript-modules-diagram//Users/pantelis/Projects/CarND/CarND-Capstone-Project/ros/src/waypoint_updater">
+      <provider selected="true" editor-type-id="UmlEditorProvider">
+        <state>
+          <ID>JavaScript-modules-diagram</ID>
+          <OriginalElement>$PROJECT_DIR$/ros/src/waypoint_updater</OriginalElement>
+          <nodes />
+          <notes />
+          <edges />
+          <settings layout="Hierarchic Group" zoom="1.0" x="691.0" y="261.0" />
+          <SelectedNodes />
+          <Categories>
+            <Category>All</Category>
+          </Categories>
+          <VISIBILITY>Details</VISIBILITY>
+        </state>
+      </provider>
+    </entry>
+    <entry file="uml://JavaScript-modules-diagram//Users/pantelis/Projects/CarND/CarND-Capstone-Project/ros/src/waypoint_updater;/Users/pantelis/Projects/CarND/CarND-Capstone-Project/ros/src/waypoint_loader;">
+      <provider selected="true" editor-type-id="UmlEditorProvider">
+        <state>
+          <ID>JavaScript-modules-diagram</ID>
+          <OriginalElement>$PROJECT_DIR$/ros/src/waypoint_updater;/Users/pantelis/Projects/CarND/CarND-Capstone-Project/ros/src/waypoint_loader;</OriginalElement>
+          <nodes />
+          <notes />
+          <edges />
+          <settings layout="Hierarchic Group" zoom="1.0" x="691.0" y="261.0" />
+          <SelectedNodes />
+          <Categories>
+            <Category>All</Category>
+          </Categories>
+          <VISIBILITY>Details</VISIBILITY>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ros/src/tl_detector/light_publisher.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/ros/src/tl_detector/tl_detector.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="30">
+          <caret line="2" column="30" lean-forward="true" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/ros/src/waypoint_updater/waypoint_updater.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="199">
-          <caret line="146" column="12" lean-forward="false" selection-start-line="146" selection-start-column="12" selection-end-line="146" selection-end-column="12" />
+        <state relative-caret-position="-515">
+          <caret line="220" column="0" lean-forward="true" selection-start-line="220" selection-start-column="0" selection-end-line="220" selection-end-column="0" />
           <folding />
         </state>
       </provider>
