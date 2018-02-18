@@ -27,9 +27,6 @@ import numpy as np
 from scipy.spatial import distance
 
 
-
-
-
 '''
 This node will publish waypoints from the car's current position to some `x` distance ahead.
 
@@ -90,14 +87,14 @@ class WaypointUpdater(object):
         self.base_waypoints = Waypoint()
         self.base_waypoints_position = np.array
         self.base_waypoints_orientation = np.array
+        self.closest_waypoint_indx = 0
         self.look_ahead_waypoints_msg = Lane()
 
         # Traffic Light member variables
         self.num_traffic_lights = 0
         self.distance_to_next_traffic_light = 0
-
-        # Ideal Traffic Light member variables
-        self.ideal_next_traffic_light_position = np.zeros([1, 3])  # init to type
+        self.next_traffic_light_waypoint_index = 0
+        self.next_traffic_light_position = np.zeros([1, 3])  # init to type
         self.ideal_next_traffic_light_state = 4  # Unknown state as defined in the TrafficLight.msg
 
         # Main control loop
@@ -115,6 +112,9 @@ class WaypointUpdater(object):
         # operations during the loop.
         rate = rospy.Rate(10)  # in Hz
 
+        # State transition and trajectory generation
+
+        # Publish the selected trajectory
         self.final_waypoints_publisher()
 
         rospy.spin()
@@ -134,7 +134,6 @@ class WaypointUpdater(object):
 
         self.current_pose_position = np.array([[pose_position.x, pose_position.y, pose_position.z]])
         self.current_pose_orientation = np.array([[pose_orientation.x, pose_orientation.y, pose_orientation.z, pose_orientation.w]])
-
 
         pass
 
@@ -164,9 +163,6 @@ class WaypointUpdater(object):
                                                     wp.pose.pose.orientation.z, wp.pose.pose.orientation.w]
             k += 1
 
-        # calculate and publish the final waypoints
-        self.final_waypoints_publisher()
-
         pass
 
     def ideal_traffic_light_detection_cb(self, msg):
@@ -179,24 +175,36 @@ class WaypointUpdater(object):
 
         self.num_traffic_lights = len(msg.lights)
 
-        self.ideal_next_traffic_light_position = np.array([[msg.lights[0].pose.pose.position.x,
-                                                            msg.lights[0].pose.pose.position.y,
-                                                            msg.lights[0].pose.pose.position.z]])
+        # assuming that the lights are ** in order ** all we need to do is to check the traffic light position
+        # with respect to the current pose and produce the next wrapped traffic light index.
 
-        self.ideal_next_traffic_light_state = msg.lights[0].state
+        for i in msg.lights:
+            self.ideal_next_traffic_light_position = np.array([[i.pose.pose.position.x, i.pose.pose.position.y, i.pose.pose.position.z]])
 
-        # self.distance_to_next_traffic_light = distance.cdist(XA=self.ideal_next_traffic_light_position,
-        #                                                      XB=self.current_pose_position, metric='euclidean',
-        #                                                      p=2).argmin()
+            # if the distance is less then 1m - effectively when the car just passed the light
+            if (distance.cdist(self.current_pose_position,
+                               self.ideal_next_traffic_light_position, 'euclidean', p=2) < 1.):
+
+                light_index = ((i+1) % self.num_traffic_lights)
+                self.ideal_next_traffic_light_position = np.array([[light_index.pose.pose.position.x, light_index.pose.pose.position.y, light_index.pose.pose.position.z]])
+                self.ideal_next_traffic_light_state = msg.lights[light_index].state
 
         pass
 
-    def traffic_cb(self, msg):
+    def traffic_cb(self, traffic_light_msg):
         """
-        The callback for processing traffic light detection.
-        :param Int32 msg: indicates the waypoint index where the traffic light was detected by the tl_detector module.
+        The callback for processing the traffic_waypoint message. If for example 12 is published in /traffic_waypoint topic,
+        an upcoming red light's stop line is nearest to base_waypoints[12], This index is used by the waypoint updater node
+        to set the target velocity for look_ahead_waypoints_msg.waypoints[12] to 0 and smoothly decrease the vehicle velocity
+        in the waypoints leading up to look_ahead_waypoints_msg.waypoints[12].
+
+        :param Int32 traffic_light_msg: indicates the waypoint index where the **red** traffic light was detected by the tl_detector module.
         """
-        # TODO: Callback for /traffic_waypoint message. Implement
+
+        self.next_traffic_light_waypoint_index = traffic_light_msg
+
+        self.distance_to_next_traffic_light = self.distance(self.base_waypoints_position, self.closest_waypoint_indx,
+                                                            self.next_traffic_light_waypoint_index)
 
         pass
 
@@ -215,15 +223,14 @@ class WaypointUpdater(object):
         :param waypoints:
         """
 
-        closest_waypoint_indx = distance.cdist(XA=self.current_pose_position, XB=self.base_waypoints_position,
+        self.closest_waypoint_indx = distance.cdist(XA=self.current_pose_position, XB=self.base_waypoints_position,
                                                metric='euclidean', p=2).argmin()
-
 
         # create the look_ahead waypoints considering the wrap around in closed tracks
         self.look_ahead_waypoints_msg = Lane()
         for i in range(0, LOOKAHEAD_WPS):
             self.look_ahead_waypoints_msg.waypoints.append(
-                self.base_waypoints.waypoints[(closest_waypoint_indx + i) % self.num_waypoints])
+                self.base_waypoints.waypoints[(self.closest_waypoint_indx + i) % self.num_waypoints])
 
 
         # message header
