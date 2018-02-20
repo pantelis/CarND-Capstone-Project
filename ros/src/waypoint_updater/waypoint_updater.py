@@ -18,7 +18,7 @@
 #
 # pydevd.settrace('192.168.1.224', port=6700, stdoutToServer=True, stderrToServer=True)
 
-import rospy
+import rospy, actionlib
 from geometry_msgs.msg import PoseStamped
 from std_msgs.msg import Int32
 # note: we import TrafficLightArray for testing purposes only
@@ -26,6 +26,7 @@ from styx_msgs.msg import Lane, Waypoint, TrafficLight, TrafficLightArray
 import math
 import numpy as np
 from scipy.spatial import distance
+import tf
 
 
 '''
@@ -47,6 +48,7 @@ TODO (for Yousuf and Aaron): Stopline location for each traffic light.
 LOOKAHEAD_WPS = 200  # Number of waypoints we will publish. You can change this number
 TRAFFIC_LIGHT_VEHICLE_DISTANCE = 1  # Distance between the vehicle when it comes to a stop and the traffic light.
 IDEAL_LIGHT_DETECTION = True  # Turns on or off the ideal traffic light detection.
+
 
 
 class WaypointUpdater(object):
@@ -72,7 +74,7 @@ class WaypointUpdater(object):
             # Note this subscriber is for testing the waypoint updater using ideal traffic light detection.
             rospy.Subscriber('/vehicle/traffic_lights', TrafficLightArray, self.ideal_traffic_light_detection_cb)
 
-        rospy.Subscriber('/obstacle_waypoints', Lane, self.obstacle_cb)
+        rospy.Subscriber('/obstacle_waypoints', Int32, self.obstacle_cb)
 
         # Publisher
         # Publish a list of waypoints ahead of the car with target velocities to the /final_waypoints topic.
@@ -83,8 +85,11 @@ class WaypointUpdater(object):
 
         # Pose member variables
         self.current_pose_topic_msg = PoseStamped()
-        self.current_pose_position = np.zeros([1, 3])
-        self.current_pose_orientation = np.zeros([1, 4])
+        self.current_pose_position = None
+        self.current_pose_orientation_quaternion = None
+        self.current_pose_roll = 0.
+        self.current_pose_pitch = 0.
+        self.current_pose_yaw = 0.
 
         # Waypoint member variables
         self.base_waypoints_topic_msg = Lane()
@@ -98,7 +103,7 @@ class WaypointUpdater(object):
         self.traffic_waypoint_topic_msg = Int32
         self.vehicle_traffic_lights_topic_msg = TrafficLightArray()
         self.num_traffic_lights = 0
-        self.distance_to_next_traffic_light = 0
+        self.distance_to_next_traffic_light = 99999
         self.next_traffic_light_waypoint_index = int
         self.next_traffic_light_position = np.zeros([1, 3])  # init to type
         self.next_traffic_light_state = 4  # Unknown state as defined in the TrafficLight.msg In real life since the
@@ -113,7 +118,7 @@ class WaypointUpdater(object):
         # Trajectory parameters
         self.acceleration_limit = 0
         self.deceleration_limit = 0
-        self.velocity_target = 0
+        self.velocity_target_mps = self.mph2mps(10.)
 
         # Main control loop
         self.main_control_loop()
@@ -124,11 +129,14 @@ class WaypointUpdater(object):
         """
         Main control loop that contains all functions that must be constantly executed with a certain rate (Hz).
         """
-        # The Rate instance will attempt to keep the loop at 10 Hz by accounting for the time used by any
+        # The Rate instance will attempt to keep the loop at 50 Hz by accounting for the time used by any
         # operations during the loop.
         rate = rospy.Rate(50)  # in Hz
 
         while not rospy.is_shutdown():
+
+            if self.num_waypoints == 0 or self.distance_to_next_traffic_light != 99999:
+                continue
 
             # base waypoints callback
             self.waypoints_cb(self.base_waypoints_topic_msg)
@@ -152,7 +160,6 @@ class WaypointUpdater(object):
             # Publish the selected trajectory
             self.final_waypoints_publisher(self.final_waypoints_topic_msg)
 
-            rospy.sleep()
     pass
 
     def state_transition(self):
@@ -186,8 +193,9 @@ class WaypointUpdater(object):
         self.set_look_ahead_waypoints_msg_header(self.final_waypoints_topic_msg, '/World', rospy.Time.now())
 
         # message paylod - set the linear velocity (x)
+
         for i in range(0, LOOKAHEAD_WPS):
-            self.set_look_ahead_waypoints_msg_velocity(self.final_waypoints_topic_msg.waypoints, i, 5.0)
+            self.set_look_ahead_waypoints_msg_velocity(self.final_waypoints_topic_msg.waypoints, i, self.velocity_target_mps)
 
     pass
 
@@ -199,10 +207,14 @@ class WaypointUpdater(object):
         #rospy.loginfo(msg)
 
         pose_position = msg.pose.position
-        pose_orientation = msg.pose.orientation
-
         self.current_pose_position = np.array([[pose_position.x, pose_position.y, pose_position.z]])
-        self.current_pose_orientation = np.array([[pose_orientation.x, pose_orientation.y, pose_orientation.z, pose_orientation.w]])
+
+        # get the Eurler angle from the provided quaternion
+        self.current_pose_orientation_quaternion = np.array([msg.pose.orientation.x, msg.pose.orientation.y,
+                                                             msg.pose.orientation.z, msg.pose.orientation.w])
+
+        self.current_pose_roll, self.current_pose_pitch, self.current_pose_yaw = \
+            tf.transformations.euler_from_quaternion(self.current_pose_orientation_quaternion)
 
         pass
 
@@ -247,8 +259,10 @@ class WaypointUpdater(object):
         """
         rospy.loginfo(msg)
 
+        # set the number of traffic lights in the track
         self.num_traffic_lights = len(msg.lights)
 
+        # calculate the distance to next traffic light
         self.next_traffic_light_distance(msg)
 
         pass
@@ -338,7 +352,10 @@ class WaypointUpdater(object):
 
     def set_look_ahead_waypoints_msg_velocity(self, look_ahead_waypoints_msg, wp, velocity_mps):
 
-        look_ahead_waypoints_msg[wp].twist.twist.linear.x = velocity_mps
+        # vx = v * cos(yaw), vy = v * sin(yaw), vz = 0
+        look_ahead_waypoints_msg[wp].twist.twist.linear.x = velocity_mps * math.cos(self.current_pose_yaw)
+        look_ahead_waypoints_msg[wp].twist.twist.linear.y = velocity_mps * math.sin(self.current_pose_yaw)
+        look_ahead_waypoints_msg[wp].twist.twist.linear.z = 0.
 
     pass
 
