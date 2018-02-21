@@ -154,3 +154,46 @@ cd CarND-Capstone/ros
 roslaunch launch/site.launch
 ```
 5. Confirm that traffic light detection works on real life images
+
+
+
+### Running the code with the docker
+
+To run the code with docker, here are the steps.
+
+1.Start the script
+
+```
+./run.sh
+```
+
+2.You're now within the container and the current directory contains the source code of your project. You can compile and run your project:
+
+```
+cd ros
+catkin_make
+source devel/setup.sh
+roslaunch launch/styx.launch
+```
+
+But this can be simplified by just using these 2 aliases:
+
+Here are some of the cool aliases that are defined in the container
+
+```
+udacity_make #Compiles the project
+udacity_run #Executes the project
+```
+
+To run multiple sessions, you can do following:
+
+```sh
+docker exec -it udacity_carnd bash
+```
+
+OR very simple, just run the script:
+
+```sh
+./run.sh
+```
+
