@@ -31,14 +31,17 @@ that we have created in the `__init__` function.
 
 '''
 
+
 class DBWNode(object):
+
+    #####################################################################################################
     def __init__(self):
         rospy.init_node('dbw_node')
 
         vehicle_mass = rospy.get_param('~vehicle_mass', 1736.35)
         fuel_capacity = rospy.get_param('~fuel_capacity', 13.5)
         brake_deadband = rospy.get_param('~brake_deadband', .1)
-        decel_limit = rospy.get_param('~decel_limit', -5)
+        decel_limit = rospy.get_param('~decel_limit', -5.)
         accel_limit = rospy.get_param('~accel_limit', 1.)
         wheel_radius = rospy.get_param('~wheel_radius', 0.2413)
         wheel_base = rospy.get_param('~wheel_base', 2.8498)
@@ -46,16 +49,19 @@ class DBWNode(object):
         max_lat_accel = rospy.get_param('~max_lat_accel', 3.)
         max_steer_angle = rospy.get_param('~max_steer_angle', 8.)
 
+        self.simulation = rospy.get_param('~simulation', False)
+
+        # publishers
         self.steer_pub = rospy.Publisher('/vehicle/steering_cmd', SteeringCmd, queue_size=1)
         self.throttle_pub = rospy.Publisher('/vehicle/throttle_cmd', ThrottleCmd, queue_size=1)
         self.brake_pub = rospy.Publisher('/vehicle/brake_cmd', BrakeCmd, queue_size=1)
 
-        self.current_linear_velocity = None
-        self.target_linear_velocity = None
-        self.target_angular_velocity = None
+        # initialize parameters
+        self.current_linear_velocity = 0.0
+        self.target_linear_velocity = 0.0
+        self.target_angular_velocity = 0.0
         self.dbw_enabled = False
         self.sample_freq = 50.0 # 50Hz frequency
-
 
         # TODO: Create `Controller` object
         # initialize control object
@@ -70,42 +76,49 @@ class DBWNode(object):
             "wheel_base": wheel_base,
             "steer_ratio": steer_ratio,
             "max_lat_accel": max_lat_accel,
-            "max_steer_angle": max_steer_angle
+            "max_steer_angle": max_steer_angle,
+            "simulation": self.simulation
         }
-
+        # initialize controller
         self.controller = Controller(**kwargs)
 
         # TODO: Subscribe to all the topics you need to
+        # subscribe to current velocity parameters
         rospy.Subscriber('/current_velocity', TwistStamped, self.current_velocity_cb)
+        # subscribe to target velocity parameters (estimated from waypoints)
         rospy.Subscriber('/twist_cmd', TwistStamped, self.twist_cmd_cb)
+        # subscribe to DBW enable state (enable==autonomous mode, else manual driving)
         rospy.Subscriber('/vehicle/dbw_enabled', Bool, self.dbw_enabled_cb)
 
-        rospy.Subscriber('/vehicle/steering_report', SteeringReport, self.st_report_cb, queue_size=1)
 
 
         self.loop()
 
     #####################################################################################################
+    # define control loop
     def loop(self):
+
         rate = rospy.Rate(self.sample_freq) # 50Hz
+
+        # TODO: Get predicted throttle, brake, and steering using `twist_controller`
+
         while not rospy.is_shutdown():
-            # TODO: Get predicted throttle, brake, and steering using `twist_controller`
-            if self.dbw_enabled and self.target_linear_velocity and self.current_linear_velocity:
-                kwargs = {
-                    "target_linear_velocity": self.target_linear_velocity,
-                    "target_angular_velocity": self.target_angular_velocity,
-                    "current_linear_velocity": self.current_linear_velocity,
-                    # 'steer_feedback': self.steer_feedback
-                }
-
-                throttle, brake, steering = self.controller.control(**kwargs)
-
+            kwargs = {
+                "target_linear_velocity": self.target_linear_velocity,
+                "target_angular_velocity": self.target_angular_velocity,
+                "current_linear_velocity": self.current_linear_velocity,
+                "dbw_status": self.dbw_enabled
+            }
+            # compute throttle, brake, steering
+            throttle, brake, steering = self.controller.control(**kwargs)
+            # publish only if in autonomous mode
+            if self.dbw_enabled:
                 self.publish(throttle, brake, steering)
 
             rate.sleep()
 
     #####################################################################################################
-    # publisher
+    # publisher function
     def publish(self, throttle, brake, steer):
         tcmd = ThrottleCmd()
         tcmd.enable = True
@@ -127,24 +140,31 @@ class DBWNode(object):
     #####################################################################################################
     # define callback functions
     def dbw_enabled_cb(self, msg):
-        self.dbw_enabled = msg.data
+        self.dbw_enabled = bool(msg.data)
 
-        if self.dbw_enabled:
-            rospy.logwarn("Controller ENABLED")
-        else:
-            rospy.logwarn("Controller DISABLED")
-            self.controller.pid_reset()
+        # if self.dbw_enabled:
+        #     rospy.logwarn("Controller ENABLED")
+        # else:
+        #     rospy.logwarn("Controller DISABLED")
+        #     self.controller.pid_reset()
 
     def current_velocity_cb(self, msg):
+        # current linear velocity from vehicle
         self.current_linear_velocity = msg.twist.linear.x
 
     def twist_cmd_cb(self, msg):
+        # linear speed in vehicle coordinates
         self.target_linear_velocity = msg.twist.linear.x
+        # Yaw (angle about z-axis)
         self.target_angular_velocity = msg.twist.angular.z
 
-    def st_report_cb(self, msg):
-        self.steer_feedback = msg.steering_wheel_angle
+        # for debugging
+        # rospy.logwarn("Linear Velocity: %.2f, Angular Velocity: %2f",
+        #               self.target_linear_velocity, self.target_angular_velocity)
 
 
+
+###################################################################
+# main function call
 if __name__ == '__main__':
     DBWNode()
