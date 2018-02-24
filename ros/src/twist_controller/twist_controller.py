@@ -120,10 +120,10 @@ class Controller(object):
             brake = 0.0
 
             # compute steering
-            yaw_correction = self.yaw.get_steering(target_linear_velocity,
+            steer = self.yaw.get_steering(target_linear_velocity,
                                                    target_angular_velocity,
                                                    current_linear_velocity)
-            # steer = self.filter_steer.filt(yaw_correction)
+            steer = self.filter_steer.filt(steer)
 
             # debug
             # rospy.logwarn("Steering Angle :%.2f", steer)
@@ -139,15 +139,15 @@ class Controller(object):
             # use brake if throttle is negative
             if throttle <0.0:
                 brake = -throttle
-                # brake = self.filter_brake.filt(brake)
+                brake = self.filter_brake.filt(brake)
                 throttle = 0.0
 
-                if brake >0.1:
-                    brake = 0.1
+                if brake >1:
+                    brake = 1
 
             else: # if throttle is positive
-                # throttle = self.filter_throttle.filt(throttle)
-                throttle = min(throttle, 1.0)
+                throttle = self.filter_throttle.filt(throttle)
+                # throttle = min(throttle, 1.0)
 
 
             # # set limits for simulation and car
@@ -160,10 +160,10 @@ class Controller(object):
             #             throttle = 0.01
             #             brake = 0.0
 
-            rospy.logwarn("----------------------------")
-            rospy.logwarn("throttle: %.4f, brake: %.4f, steer: %.4f", throttle, brake, steer)
-            rospy.logwarn("target-v: %.4f, target-omega: %.6f, current-v: %.4f", target_linear_velocity,
-                          target_angular_velocity, current_linear_velocity)
+            # rospy.logwarn("----------------------------")
+            # rospy.logwarn("throttle: %.4f, brake: %.4f, steer: %.4f", throttle, brake, steer)
+            # rospy.logwarn("target-v: %.4f, target-omega: %.6f, current-v: %.4f", target_linear_velocity,
+            #               target_angular_velocity, current_linear_velocity)
 
 
 
