@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-#Uncomment lines 3-19 for debugging
+# #Uncomment lines 3-19 for debugging
 # import sys
 #
 # # The following lines are specific to Pycharm Remote Debugging configuration (pydev) that allows
@@ -112,7 +112,6 @@ class WaypointUpdater(object):
         self.current_velocity_mps = 0
         self.minimum_stopping_distance = 0
 
-
         # Main control loop
         self.main_control_loop()
 
@@ -129,6 +128,7 @@ class WaypointUpdater(object):
         while not rospy.is_shutdown():
 
             if self.num_waypoints is None and self.current_pose_position is not None:
+                print('main control loop final waypoint conditions are not met \n')
                 continue
 
             # Publish the selected trajectory
