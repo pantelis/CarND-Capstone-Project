@@ -1,22 +1,22 @@
 #!/usr/bin/env python
 
 #Uncomment lines 3-19 for debugging
-import sys
-
-# The following lines are specific to Pycharm Remote Debugging configuration (pydev) that allows
-# the host os to run the IDE and the Simulator and the remote Ubuntu VM to run ROS.
-if sys.platform == "darwin":
-    # OSX
-    sys.path.append('/home/student/CarND-Capstone-Project/macos/pycharm-debug.egg')
-elif sys.platform == "linux" or sys.platform == "linux2":
-    # linux
-    sys.path.append('')
-# elif platform == "win32":
-#     # Windows
-#     sys.path.append('/home/student/CarND-Capstone-Project/ros/win/pycharm-debug.egg')
-import pydevd
-#pydevd.settrace('172.20.10.6', port=6700)
-pydevd.settrace('192.168.1.224', port=6700, stdoutToServer=True, stderrToServer=True)
+# import sys
+#
+# # The following lines are specific to Pycharm Remote Debugging configuration (pydev) that allows
+# # the host os to run the IDE and the Simulator and the remote Ubuntu VM to run ROS.
+# if sys.platform == "darwin":
+#     # OSX
+#     sys.path.append('/home/student/CarND-Capstone-Project/macos/pycharm-debug.egg')
+# elif sys.platform == "linux" or sys.platform == "linux2":
+#     # linux
+#     sys.path.append('')
+# # elif platform == "win32":
+# #     # Windows
+# #     sys.path.append('/home/student/CarND-Capstone-Project/ros/win/pycharm-debug.egg')
+# import pydevd
+# #pydevd.settrace('172.20.10.6', port=6700)
+# pydevd.settrace('192.168.1.224', port=6700, stdoutToServer=True, stderrToServer=True)
 
 import rospy
 from geometry_msgs.msg import PoseStamped, TwistStamped
@@ -114,8 +114,7 @@ class WaypointUpdater(object):
 
 
         # Main control loop
-        # self.main_control_loop()
-        rospy.spin()
+        self.main_control_loop()
 
     pass
 
@@ -228,7 +227,12 @@ class WaypointUpdater(object):
 
     def trajectory_generation(self, next_traffic_light_waypoint_index):
         """
-        Produces the trajectory for the vehicle - the header and payload of the look_ahead_waypoints_msg
+        Produces the trajectory for the vehicle - the header and payload of the final_waypoints_topic_msg
+        For the kinematics we are using the formula: v_f^2 = v_i^2 + 2*alpha (x_f - x_i)
+        f : final position / velocity
+        i : initial position / velocity
+        alpha : acceleration / deceleration
+        x_f-x_i is the stopping distance if the final velocity v_f = 0.0.
         """
 
         rospy.loginfo("Trajectory Generation function")
