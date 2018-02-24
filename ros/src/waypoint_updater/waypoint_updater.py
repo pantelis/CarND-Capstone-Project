@@ -200,7 +200,7 @@ class WaypointUpdater(object):
 
             # TODO: Since the traffic light msg.data is not coming from the TL detector we call the callback here
             # TODO: to test.
-            self.traffic_cb(msg)
+            # self.traffic_cb(msg)
         pass
 
     def traffic_cb(self, msg):
@@ -215,8 +215,9 @@ class WaypointUpdater(object):
         """
         rospy.loginfo("Traffic Light Callback")
         #rospy.loginfo(msg.data)
+        rospy.logwarn("Traffic light callback {}".format(msg))
 
-        self.next_traffic_light_waypoint_index = -1 #msg.data
+        self.next_traffic_light_waypoint_index = msg.data
 
         print("Next traffic light waypoint index = ", self.next_traffic_light_waypoint_index)
 
