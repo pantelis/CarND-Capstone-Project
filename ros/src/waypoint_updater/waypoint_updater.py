@@ -122,8 +122,8 @@ class WaypointUpdater(object):
 
         while not rospy.is_shutdown():
 
-            if self.num_waypoints is None and self.current_pose_position is not None:
-                print('main control loop final waypoint conditions are not met \n')
+            if self.num_waypoints is None and self.current_pose_position is None:
+                rospy.logwarn("final_waypoints publisher is not called \n")
                 continue
 
             # Publish the selected trajectory
@@ -189,7 +189,7 @@ class WaypointUpdater(object):
                                                                     XB=self.base_waypoints_position,
                                                                     metric='euclidean', p=2).argmin()
 
-            rospy.loginfo_throttle(1, self.closest_to_vehicle_waypoint_index)
+            rospy.logwarn("closest_to_vehicle_waypoint_index = " + str(self.closest_to_vehicle_waypoint_index))
 
             # store also the orientation as a numpy 2D array (10902, 4)
             tmp = []
