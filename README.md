@@ -1,5 +1,11 @@
 # Autonomly.io Capstone Project
 
+This is a team effort that involved the following members (alphabetical order)
+
+1. Kinshuk Chandra (Traffic Light detector package)
+2. Lance L (Classification model training) 
+3. Vikulp Mirsha (Twist controller package)
+4. Pantelis Monogioudis (Team Lead and Path Planner / Waypoint updater package)
 
 ### Development Environment Setup
 This setup involves remote debugging of the code running in the ROS Ubuntu VM from a host OS that also runs the simulator.
