@@ -172,7 +172,7 @@ class TLDetector(object):
             self.prev_light_loc = None
             return False
 
-        cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "bgr8")
+        cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "rgb8")
 
         # Get classification
         return self.light_classifier.get_classification(cv_image)
@@ -236,14 +236,11 @@ class TLDetector(object):
                     car_dist = TLDetector.euclidean_distance_between_pose(self.pose.pose, stop_line_pose)
 
                     if car_dist < MAX_DISTANCE_TO_TL:
-                        if IS_SIMULATOR:
-                            state = light.state
+                        if light is not None:
+                            state = self.get_light_state(light)
+                            self.debug("Nearest TL State - {}".format(state))
                         else:
-                            if light is not None:
-                                state = self.get_light_state(light)
-                                self.debug("Nearest TL State - {}".format(state))
-                            else:
-                                self.debug("No TL found as TL is none")
+                            self.debug("No TL found as TL is none")
                     else:
                         self.debug("TL is farther than %d, so ignoring".format(MAX_DISTANCE_TO_TL))
 
