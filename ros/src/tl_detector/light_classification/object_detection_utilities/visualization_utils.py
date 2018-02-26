@@ -23,7 +23,7 @@ import collections
 import functools
 # Set headless-friendly backend.
 import matplotlib; matplotlib.use('Agg')  # pylint: disable=multiple-statements
-import matplotlib.pyplot as plt  # pylint: disable=g-import-not-at-top
+# import matplotlib.pyplot as plt  # pylint: disable=g-import-not-at-top
 import numpy as np
 import PIL.Image as Image
 import PIL.ImageColor as ImageColor
@@ -612,15 +612,15 @@ def add_cdf_image_summary(values, name):
     cumulative_values = np.cumsum(sorted_values)
     fraction_of_examples = (np.arange(cumulative_values.size, dtype=np.float32)
                             / cumulative_values.size)
-    fig = plt.figure(frameon=False)
-    ax = fig.add_subplot('111')
-    ax.plot(fraction_of_examples, cumulative_values)
-    ax.set_ylabel('cumulative normalized values')
-    ax.set_xlabel('fraction of examples')
-    fig.canvas.draw()
-    width, height = fig.get_size_inches() * fig.get_dpi()
-    image = np.fromstring(fig.canvas.tostring_rgb(), dtype='uint8').reshape(
-        1, int(height), int(width), 3)
+    # fig = plt.figure(frameon=False)
+    # ax = fig.add_subplot('111')
+    # ax.plot(fraction_of_examples, cumulative_values)
+    # ax.set_ylabel('cumulative normalized values')
+    # ax.set_xlabel('fraction of examples')
+    # fig.canvas.draw()
+    # width, height = fig.get_size_inches() * fig.get_dpi()
+    # image = np.fromstring(fig.canvas.tostring_rgb(), dtype='uint8').reshape(
+    #     1, int(height), int(width), 3)
     return image
   cdf_plot = tf.py_func(cdf_plot, [values], tf.uint8)
   tf.summary.image(name, cdf_plot)
