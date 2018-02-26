@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
-# #Uncomment lines 3-19 for debugging
-# import sys
-#
-# # The following lines are specific to Pycharm Remote Debugging configuration (pydev) that allows
-# # the host os to run the IDE and the Simulator and the remote Ubuntu VM to run ROS.
+#Uncomment lines 3-19 for debugging
+import sys
+
+# The following lines are specific to Pycharm Remote Debugging configuration (pydev) that allows
+# the host os to run the IDE and the Simulator and the remote Ubuntu VM to run ROS.
 # if sys.platform == "darwin":
 #     # OSX
 #     sys.path.append('/home/student/CarND-Capstone-Project/macos/pycharm-debug.egg')
@@ -17,6 +17,8 @@
 # import pydevd
 # #pydevd.settrace('172.20.10.6', port=6700)
 # pydevd.settrace('192.168.1.224', port=6700, stdoutToServer=True, stderrToServer=True)
+
+
 
 import rospy
 from geometry_msgs.msg import PoseStamped, TwistStamped
@@ -88,9 +90,8 @@ class WaypointUpdater(object):
         # Waypoint member variables
         self.base_waypoints_topic_msg = Lane()
         self.final_waypoints_topic_msg = Lane()
+        self.final_waypoints_topic_msg.waypoints = [Waypoint() for _ in range(LOOKAHEAD_WPS)]
         self.num_waypoints = None
-        self.base_waypoints_position = np.array
-        self.base_waypoints_orientation = np.array
         self.closest_to_vehicle_waypoint_index = None
 
         # Traffic Light member variables
@@ -108,36 +109,47 @@ class WaypointUpdater(object):
         self.current_velocity_mps = 0
         self.minimum_stopping_distance = 0
 
-        # Main control loop
-        self.main_control_loop()
+        # The Rate instance will attempt to keep the loop at 50 Hz by accounting for the time used by any
+        # operations during the loop.
+        rate = rospy.Rate(50)  # in Hz
+        while not rospy.is_shutdown():
+            # Main control loop
+            self.main_control_loop()
+            # Added to maintain th 200ms (50 Hz) loop execution interval
+            rate.sleep()
+
 
     # ============================================================================================
     def main_control_loop(self):
         """
         Main control loop that contains all functions that must be constantly executed with a certain rate (Hz).
         """
-        # The Rate instance will attempt to keep the loop at 50 Hz by accounting for the time used by any
-        # operations during the loop.
-        rate = rospy.Rate(50)  # in Hz
 
-        while not rospy.is_shutdown():
+        # if self.num_waypoints is None or self.current_pose_position is None or \
+        #         self.closest_to_vehicle_waypoint_index is None:
+        #     rospy.logwarn("main control loop is not called \n")
+        #     continue
 
-            if self.num_waypoints is None and self.current_pose_position is None:
-                rospy.logwarn("final_waypoints publisher is not called \n")
-                continue
+        #  Generate the required trajectory - hardcoded traffic light waypoint
+        next_traffic_light_waypoint_index = -1
+        base_waypoints_topic_msg_waypoints = self.base_waypoints_topic_msg.waypoints
+        current_pose_position = self.current_pose_position
 
-            # Publish the selected trajectory
-            self.final_waypoints_publisher(self.final_waypoints_topic_msg)
-
-            # some debug messages
-            # rospy.logwarn("finale message type: " + str(type(self.final_waypoints_topic_msg)))
-            # rospy.logwarn("====")
-            # rospy.logwarn("published velocity-wp-1: " +
-            #               str(self.final_waypoints_topic_msg.waypoints[0].twist.twist.linear.x))
+        self.trajectory_generation(base_waypoints_topic_msg_waypoints, current_pose_position,
+                                   next_traffic_light_waypoint_index)
 
 
-            # Added to maintain th 200ms (50 Hz) loop execution interval
-            rate.sleep()
+        # Publish the selected trajectory
+        self.final_waypoints_publisher(self.final_waypoints_topic_msg)
+
+        # some debug messages
+        # rospy.logwarn("finale message type: " + str(type(self.final_waypoints_topic_msg)))
+        # rospy.logwarn("====")
+        # rospy.logwarn("published velocity-wp-1: " +
+        #               str(self.final_waypoints_topic_msg.waypoints[0].twist.twist.linear.x))
+
+
+
 
     # ============================================================================================
     def waypoints_cb(self, msg):
@@ -155,7 +167,7 @@ class WaypointUpdater(object):
         self.num_waypoints = len(msg.waypoints)
 
         # rospy.logwarn("incoming message type: " + str(type(self.base_waypoints_topic_msg)))
-        # rospy.logwarn("published velocity-wp-1: " + str(msg.waypoints[0].twist.twist.linear.x))
+        # rospy.logwarn("**subscribed** velocity-wp-0: " + str(msg.waypoints[0].twist.twist.linear.x))
 
     # ============================================================================================
     def pose_cb(self, msg):
@@ -164,9 +176,11 @@ class WaypointUpdater(object):
         :param StampedPose msg: message containing the current pose of the vehicle.
         """
         rospy.loginfo_throttle(1, "Pose Callback")
-        # rospy.loginfo_throttle(1, msg)
+        rospy.loginfo_throttle(1, msg)
 
+        self.current_pose = msg
         self.current_pose_position = np.array([[msg.pose.position.x, msg.pose.position.y, msg.pose.position.z]])
+        print(self.current_pose_position)
 
         # get the Eurler angle from the provided quaternion
         self.current_pose_orientation_quaternion = np.array([msg.pose.orientation.x, msg.pose.orientation.y,
@@ -174,34 +188,6 @@ class WaypointUpdater(object):
 
         self.current_pose_roll, self.current_pose_pitch, self.current_pose_yaw = \
             tf.transformations.euler_from_quaternion(self.current_pose_orientation_quaternion)
-
-        if self.num_waypoints is not None:  # Ensures that the waypoint_cb was executed.
-
-            # create the numpy 2D array (1092, 3) necessary for estimating the closest waypoint in an efficient manner.
-            tmp = []
-            for wp in self.base_waypoints_topic_msg.waypoints:
-                tmp.append([wp.pose.pose.position.x, wp.pose.pose.position.y, wp.pose.pose.position.z])
-
-            self.base_waypoints_position = np.asarray(tmp)
-
-            # Calculate a 10902 vector of distances in an efficient way using KD-Trees available in scipy.spatial
-            self.closest_to_vehicle_waypoint_index = distance.cdist(XA=self.current_pose_position,
-                                                                    XB=self.base_waypoints_position,
-                                                                    metric='euclidean', p=2).argmin()
-
-            rospy.logwarn("closest_to_vehicle_waypoint_index = " + str(self.closest_to_vehicle_waypoint_index))
-
-            # store also the orientation as a numpy 2D array (10902, 4)
-            tmp = []
-            for wp in self.base_waypoints_topic_msg.waypoints:
-                tmp.append([wp.pose.pose.orientation.x, wp.pose.pose.orientation.y,
-                            wp.pose.pose.orientation.z, wp.pose.pose.orientation.w])
-
-            self.base_waypoints_orientation = np.asarray(tmp)
-
-            rospy.loginfo_throttle(1, self.current_pose_position)
-
-        pass
 
     # ============================================================================================
     def traffic_cb(self, msg):
@@ -220,11 +206,12 @@ class WaypointUpdater(object):
 
         rospy.logwarn("Traffic light callback {}".format(self.next_traffic_light_waypoint_index))
 
-        #  Generate the required trajectory
-        self.trajectory_generation(self.next_traffic_light_waypoint_index)
+    # ============================================================================================
+    def current_velocity_cb(self, msg):
+            self.current_velocity_mps = msg.twist.linear.x
 
     # ============================================================================================
-    def trajectory_generation(self, next_traffic_light_waypoint_index):
+    def trajectory_generation(self, base_waypoints_topic_msg_waypoints, current_pose_position, next_traffic_light_waypoint_index):
         """
         Produces the trajectory for the vehicle - the header and payload of the final_waypoints_topic_msg
         For the kinematics we are using the formula: v_f^2 = v_i^2 + 2*alpha (x_f - x_i)
@@ -236,12 +223,14 @@ class WaypointUpdater(object):
 
         rospy.loginfo("Trajectory Generation function")
 
+        # get closest to the vehicle waypoint index
+        self.closest_to_vehicle_waypoint_index = self.closest_waypoint_estimator(base_waypoints_topic_msg_waypoints,
+                                                                                 current_pose_position)
+
         # create the look_ahead waypoints considering the wrap around in closed loop tracks
-        self.final_waypoints_topic_msg = Lane()
         for i in range(0, LOOKAHEAD_WPS):
-            self.final_waypoints_topic_msg.waypoints.append(
-                self.base_waypoints_topic_msg.waypoints[
-                    (self.closest_to_vehicle_waypoint_index + i) % self.num_waypoints])
+            self.final_waypoints_topic_msg.waypoints[i] = base_waypoints_topic_msg_waypoints[
+                    (self.closest_to_vehicle_waypoint_index + i) % self.num_waypoints]
 
         # minimum stopping distance - to be compared against the distance from the traffic light
         self.minimum_stopping_distance = self.minimum_stopping_distance_calcularor(self.current_velocity_mps,
@@ -310,10 +299,6 @@ class WaypointUpdater(object):
                 print("Red light outside of planning horizon")
 
     # ============================================================================================
-    def current_velocity_cb(self, msg):
-        self.current_velocity_mps = msg.twist.linear.x
-
-    # ============================================================================================
     def final_waypoints_publisher(self, msg):
 
         """
@@ -328,6 +313,8 @@ class WaypointUpdater(object):
         # publish the message
         self.final_waypoints_pub.publish(msg)
 
+        rospy.loginfo_throttle(1, msg)
+
     # ============================================================================================
     def obstacle_cb(self, msg):
         """
@@ -335,7 +322,41 @@ class WaypointUpdater(object):
         """
         # TODO: Callback for /obstacle_waypoint message.
 
+    # =================================================================================================
+
+    def closest_waypoint_estimator(self, base_waypoints_topic_msg_waypoints, current_pose):
+
+        # # create the numpy 2D array (1092, 3) necessary for estimating the closest waypoint in an efficient manner.
+        # tmp = []
+        # for wp in base_waypoints_topic_msg_waypoints:
+        #     tmp.append([wp.pose.pose.position.x, wp.pose.pose.position.y, wp.pose.pose.position.z])
+        #
+        # base_waypoints_position = np.asarray(tmp)
+        #
+        # # Calculate a 10902 vector of distances in an efficient way using KD-Trees available in scipy.spatial
+        # closest_to_vehicle_waypoint_index = distance.cdist(XA=current_pose_position,
+        #                                                    XB=base_waypoints_position,
+        #                                                    metric='euclidean', p=2).argmin()
+
+        if len(base_waypoints_topic_msg_waypoints) == 0:
+            rospy.loginfo("len(base_waypoints_topic_msg_waypoints) == 0")
+
+        closest_dist = 99999.
+        closest_to_vehicle_waypoint_index = 0
+        for i in range(len(base_waypoints_topic_msg_waypoints)):
+            dist = self.euclidean_distance(current_pose.pose.position, base_waypoints_topic_msg_waypoints[i].pose.pose.position)
+            if dist < closest_dist:
+                closest_dist = dist
+                closest_to_vehicle_waypoint_index = i
+
+        rospy.loginfo(current_pose.pose.position)
+        rospy.loginfo(closest_to_vehicle_waypoint_index)
+
+
+        return closest_to_vehicle_waypoint_index
+
     # ============================================================================================
+
     def ideal_traffic_light_detection_cb(self, msg):
         """
         Sets the variables that determine the position and state of the next traffic light
@@ -386,6 +407,7 @@ class WaypointUpdater(object):
 
     # ============================================================================================
     def set_look_ahead_waypoints_msg_header(self, look_ahead_waypoints_msg, frame_id, time_stamp):
+
         look_ahead_waypoints_msg.header.frame_id = frame_id
         look_ahead_waypoints_msg.header.stamp = time_stamp
 
@@ -412,6 +434,11 @@ class WaypointUpdater(object):
             dist += dl(waypoints[wp1].pose.pose.position, waypoints[i].pose.pose.position)
             wp1 = i
         return dist
+
+    # ============================================================================================
+
+    def euclidean_distance(self, p1, p2):
+        return math.sqrt((p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2 + (p1.z - p2.z) ** 2)
 
     # ============================================================================================
     def minimum_stopping_distance_calcularor(self, v_i, alpha):
