@@ -11,6 +11,7 @@ import tf
 import cv2
 import yaml
 import math
+import os
 
 STATE_COUNT_THRESHOLD = 3
 MAX_DISTANCE = float("inf")
@@ -51,7 +52,14 @@ class TLDetector(object):
         self.upcoming_red_light_pub = rospy.Publisher('/traffic_waypoint', Int32, queue_size=1)
 
         self.bridge = CvBridge()
-        self.light_classifier = TLClassifier()
+        curr_dir = os.path.dirname(os.path.realpath(__file__))
+        self.debug(curr_dir)
+        if IS_SIMULATOR:
+            self.light_classifier = TLClassifier(curr_dir + "/light_classification/models/frozen_inference_graph.pb",
+                                                 curr_dir + "/light_classification/models/label_map.pbtxt")
+        else:
+            self.light_classifier = TLClassifier()
+
         self.listener = tf.TransformListener()
 
         self.state = TrafficLight.UNKNOWN
@@ -164,7 +172,7 @@ class TLDetector(object):
             self.prev_light_loc = None
             return False
 
-        cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "bgr8")
+        cv_image = self.bridge.imgmsg_to_cv2(self.camera_image, "rgb8")
 
         # Get classification
         return self.light_classifier.get_classification(cv_image)
@@ -228,14 +236,11 @@ class TLDetector(object):
                     car_dist = TLDetector.euclidean_distance_between_pose(self.pose.pose, stop_line_pose)
 
                     if car_dist < MAX_DISTANCE_TO_TL:
-                        if IS_SIMULATOR:
-                            state = light.state
+                        if light is not None:
+                            state = self.get_light_state(light)
+                            self.debug("Nearest TL State - {}".format(state))
                         else:
-                            if light is not None:
-                                state = self.get_light_state(light)
-                                self.debug("Nearest TL State - {}".format(state))
-                            else:
-                                self.debug("No TL found as TL is none")
+                            self.debug("No TL found as TL is none")
                     else:
                         self.debug("TL is farther than %d, so ignoring".format(MAX_DISTANCE_TO_TL))
 

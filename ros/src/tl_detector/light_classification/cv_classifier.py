@@ -1,6 +1,12 @@
 import cv2
 import numpy as np
 import math
+from styx_msgs.msg import TrafficLight
+
+
+YELLOW = 'yellow'
+GREEN = 'green'
+RED = 'red'
 
 def standardize_input(image_in):
     ## DONE: Resize image and pre-process so that all "standard" images are the same size
@@ -177,14 +183,20 @@ def feature_aggregator(rbg_image_in, debug=False, selected_channels=[1, 2]):
         print(feature)
     return label_str
 
-
-def estimate_label(rgb_image_in, debug=False, selected_channels=[1, 2]):
-    ## DONE: Extract feature(s) from the RGB image and use those features to
-    ## classify the image and output a one-hot encoded label
-    predicted_label_str = feature_aggregator(rgb_image_in, debug, selected_channels)
-    predicted_label = one_hot_encode(predicted_label_str)
-    if (debug):
-        print(predicted_label_str)
-        print(predicted_label)
-
-    return predicted_label
+class CVClassifier:
+    def get_classification(rgb_image_in, debug=False, selected_channels=[1, 2]):
+        ## DONE: Extract feature(s) from the RGB image and use those features to
+        ## classify the image and output a one-hot encoded label
+        predicted_label_str = feature_aggregator(rgb_image_in, debug, selected_channels)
+        predicted_label = one_hot_encode(predicted_label_str)
+        if (debug):
+            print(predicted_label_str)
+            print(predicted_label)
+        if class_name == RED:
+            self.current_light = TrafficLight.RED
+        elif class_name == GREEN:
+            self.current_light = TrafficLight.GREEN
+        elif class_name == YELLOW:
+            self.current_light = TrafficLight.YELLOW
+        self.image_np_deep = image
+        return predicted_label
