@@ -11,6 +11,7 @@ import tf
 import cv2
 import yaml
 import math
+import os
 
 STATE_COUNT_THRESHOLD = 3
 MAX_DISTANCE = float("inf")
@@ -51,7 +52,14 @@ class TLDetector(object):
         self.upcoming_red_light_pub = rospy.Publisher('/traffic_waypoint', Int32, queue_size=1)
 
         self.bridge = CvBridge()
-        self.light_classifier = TLClassifier()
+        curr_dir = os.path.dirname(os.path.realpath(__file__))
+        self.debug(curr_dir)
+        if IS_SIMULATOR:
+            self.light_classifier = TLClassifier(curr_dir + "/light_classification/models/frozen_inference_graph.pb",
+                                                 curr_dir + "/light_classification/models/label_map.pbtxt")
+        else:
+            self.light_classifier = TLClassifier()
+
         self.listener = tf.TransformListener()
 
         self.state = TrafficLight.UNKNOWN
