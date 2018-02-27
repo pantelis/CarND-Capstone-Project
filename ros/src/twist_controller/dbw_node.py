@@ -61,7 +61,7 @@ class DBWNode(object):
         self.target_linear_velocity = 0.0
         self.target_angular_velocity = 0.0
         self.dbw_enabled = False
-        self.sample_freq = 10.0 # 50Hz frequency
+        self.sample_freq = 50.0 # 50Hz frequency
 
         # TODO: Create `Controller` object
         # initialize control object
@@ -90,15 +90,13 @@ class DBWNode(object):
         # subscribe to DBW enable state (enable==autonomous mode, else manual driving)
         rospy.Subscriber('/vehicle/dbw_enabled', Bool, self.dbw_enabled_cb, queue_size=1)
 
-
-
         self.loop()
 
     #####################################################################################################
     # define control loop
     def loop(self):
 
-        rate = rospy.Rate(self.sample_freq) # 10 or 50Hz
+        rate = rospy.Rate(self.sample_freq) # 50Hz
 
         # TODO: Get predicted throttle, brake, and steering using `twist_controller`
 
@@ -162,8 +160,6 @@ class DBWNode(object):
         # rospy.logwarn('angular-velocity: ' + str(msg.twist.angular.z))
         # rospy.logwarn("Linear Velocity: %.2f, Angular Velocity: %2f",
         #               self.target_linear_velocity, self.target_angular_velocity)
-
-
 
 ###################################################################
 # main function call
