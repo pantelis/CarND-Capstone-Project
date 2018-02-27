@@ -155,64 +155,27 @@ class WaypointUpdater(object):
 
 
         # TODO: Remove the hardcoding of the traffic light waypoint index
-        self.next_traffic_light_waypoint_index = -1
+        # self.next_traffic_light_waypoint_index = -1
 
         # generate the trajectory
         if self.next_traffic_light_waypoint_index is not None and self.base_waypoints_topic_msg is not None and \
            self.closest_to_vehicle_waypoint_index is not None:
 
-            self.final_waypoints = self.base_waypoints_topic_msg.waypoints[
-                                   self.closest_to_vehicle_waypoint_index: self.closest_to_vehicle_waypoint_index +
-                                                                           LOOKAHEAD_WPS + 1]
+            # self.final_waypoints = self.base_waypoints_topic_msg.waypoints[
+            #                        self.closest_to_vehicle_waypoint_index: self.closest_to_vehicle_waypoint_index +
+            #                                                                LOOKAHEAD_WPS + 1]
 
-            # self.final_waypoints = self.trajectory_generation(self.base_waypoints_topic_msg.waypoints,
-            #                                                   self.closest_to_vehicle_waypoint_index,
-            #                                                   self.next_traffic_light_waypoint_index)
+            self.final_waypoints = self.trajectory_generation(self.base_waypoints_topic_msg.waypoints,
+                                                              self.closest_to_vehicle_waypoint_index,
+                                                              self.next_traffic_light_waypoint_index)
 
             self.velocity_target_mps = self.nominal_velocity_mps
-            for i in range(LOOKAHEAD_WPS):
-                self.set_look_ahead_waypoints_msg_velocity(self.final_waypoints, i, self.velocity_target_mps)
+            if self.final_waypoints:
+                for i in range(LOOKAHEAD_WPS):
+                    self.set_look_ahead_waypoints_msg_velocity(self.final_waypoints, i, self.velocity_target_mps)
 
             self.final_waypoints_publisher()
-    # ============================================================================================
-
-    def traffic_cb(self, msg):
-        """
-        The callback for processing the traffic_waypoint message. If for example 12 is published in /traffic_waypoint topic,
-        an upcoming red light's stop line is nearest to base_waypoints[12], This index is used by the waypoint updater node
-        to set the target velocity for look_ahead_waypoints_msg.waypoints[12] to 0 and smoothly decrease the vehicle velocity
-        in the waypoints leading up to look_ahead_waypoints_msg.waypoints[12].
-        :param Int32 msg: indicates the waypoint index where the **red** traffic light was
-        detected by the tl_detector module.
-        """
-
-        rospy.logwarn("Traffic light callback {}".format(msg))
-
-        self.next_traffic_light_waypoint_index = msg.data
-
-        rospy.logwarn("Traffic light callback {}".format(self.next_traffic_light_waypoint_index))
-
-    # ============================================================================================
-    def final_waypoints_publisher(self):
-
-        """
-        Publishes the look ahead waypoints message in the /final_waypoints topic.
-        """
-        # rospy.loginfo_throttle(1, "Final Waypoints Publisher")
-
-        self.final_waypoints_topic_msg = Lane()
-
-        #  message header
-        self.final_waypoints_topic_msg.header = self.base_waypoints_topic_msg.header
-
-        # waypoints
-        self.final_waypoints_topic_msg.waypoints = self.final_waypoints
-
-        # publish the message
-        self.final_waypoints_pub.publish(self.final_waypoints_topic_msg)
-
-    # ============================================================================================
-
+    # ========================================================================================================
     def trajectory_generation(self, base_waypoints_topic_msg_waypoints, closest_to_vehicle_waypoint_index,
                               next_traffic_light_waypoint_index):
         """
@@ -224,7 +187,7 @@ class WaypointUpdater(object):
         x_f-x_i is the stopping distance if the final velocity v_f = 0.0.
         """
 
-        rospy.loginfo("Trajectory Generation function")
+        # rospy.loginfo("Trajectory Generation function")
 
         # create the look_ahead waypoints considering the wrap around in closed loop tracks
         # for i in range(0, LOOKAHEAD_WPS):
@@ -236,9 +199,6 @@ class WaypointUpdater(object):
         #     final_waypoints.append(base_waypoints_topic_msg_waypoints[
         #             (closest_to_vehicle_waypoint_index + i) % self.num_waypoints])
 
-        final_waypoints = self.base_waypoints_topic_msg.waypoints[
-                               self.closest_to_vehicle_waypoint_index: self.closest_to_vehicle_waypoint_index +
-                                                                       LOOKAHEAD_WPS + 1]
 
         # # minimum stopping distance - to be compared against the distance from the traffic light
         # self.minimum_stopping_distance = self.minimum_stopping_distance_calcularor(self.current_velocity_mps,
@@ -246,7 +206,13 @@ class WaypointUpdater(object):
         #
         # # if the next red traffic light is beyond the traffic light detection distance
         # # (parameter in td_detector set currently to 100m) the tl_detector will produce a -1 as the light waypoint index
-        # if next_traffic_light_waypoint_index == -1:
+        final_waypoints = []
+        if next_traffic_light_waypoint_index == -1:
+
+            final_waypoints = self.base_waypoints_topic_msg.waypoints[
+                              self.closest_to_vehicle_waypoint_index: self.closest_to_vehicle_waypoint_index +
+                                                                      LOOKAHEAD_WPS + 1]
+
         #
         #     self.distance_to_next_traffic_light = 99999
         #
@@ -319,6 +285,42 @@ class WaypointUpdater(object):
         # TODO: Callback for /obstacle_waypoint message.
 
     # =================================================================================================
+    def traffic_cb(self, msg):
+        """
+        The callback for processing the traffic_waypoint message. If for example 12 is published in /traffic_waypoint topic,
+        an upcoming red light's stop line is nearest to base_waypoints[12], This index is used by the waypoint updater node
+        to set the target velocity for look_ahead_waypoints_msg.waypoints[12] to 0 and smoothly decrease the vehicle velocity
+        in the waypoints leading up to look_ahead_waypoints_msg.waypoints[12].
+        :param Int32 msg: indicates the waypoint index where the **red** traffic light was
+        detected by the tl_detector module.
+        """
+
+        rospy.logwarn("Traffic light callback {}".format(msg))
+
+        self.next_traffic_light_waypoint_index = msg.data
+
+        rospy.logwarn("Traffic light callback {}".format(self.next_traffic_light_waypoint_index))
+
+    # ============================================================================================
+    def final_waypoints_publisher(self):
+
+        """
+        Publishes the look ahead waypoints message in the /final_waypoints topic.
+        """
+        # rospy.loginfo_throttle(1, "Final Waypoints Publisher")
+
+        self.final_waypoints_topic_msg = Lane()
+
+        #  message header
+        self.final_waypoints_topic_msg.header = self.base_waypoints_topic_msg.header
+
+        # waypoints
+        self.final_waypoints_topic_msg.waypoints = self.final_waypoints
+
+        # publish the message
+        self.final_waypoints_pub.publish(self.final_waypoints_topic_msg)
+
+    # ============================================================================================
 
     def closest_waypoint_estimator(self, base_waypoints_topic_msg_waypoints, current_pose_position):
 
