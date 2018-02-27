@@ -20,6 +20,8 @@ MAX_DISTANCE_TO_TL = 100
 UNKNOWN_TL_STATE = TrafficLight.UNKNOWN
 UNKNOWN_WP_IDX = -1
 IS_SIMULATOR = True
+USE_CV_CLASSIFIER = False
+USE_ROS_TL_STATE = False
 
 
 class TLDetector(object):
@@ -52,13 +54,21 @@ class TLDetector(object):
         self.upcoming_red_light_pub = rospy.Publisher('/traffic_waypoint', Int32, queue_size=1)
 
         self.bridge = CvBridge()
-        curr_dir = os.path.dirname(os.path.realpath(__file__))
-        self.debug(curr_dir)
-        if IS_SIMULATOR:
-            self.light_classifier = TLClassifier(curr_dir + "/light_classification/models/frozen_inference_graph.pb",
-                                                 curr_dir + "/light_classification/models/label_map.pbtxt")
-        else:
+
+        if USE_CV_CLASSIFIER:
             self.light_classifier = TLClassifier()
+        else:
+            curr_dir = os.path.dirname(os.path.realpath(__file__))
+            self.debug("Curr directory is " + curr_dir)
+            labels_path = curr_dir + "/light_classification/models/label_map.pbtxt"
+
+
+            if IS_SIMULATOR:
+                model_path = curr_dir + "/light_classification/models/sim/frozen_inference_graph.pb"
+            else:
+                model_path = curr_dir + "/light_classification/models/real/frozen_inference_graph.pb"
+
+            self.light_classifier = TLClassifier(model_path, labels_path)
 
         self.listener = tf.TransformListener()
 
@@ -230,14 +240,17 @@ class TLDetector(object):
                 stop_line_pose = TLDetector.get_pose_from_line(stop_line_position)
 
                 wp_idx = self.get_closest_waypoint(stop_line_pose)
-                self.debug("Closest WP index: %s.".format(wp_idx))
+                self.debug("Closest WP index: {}".format(wp_idx))
 
                 if wp_idx > -1:
                     car_dist = TLDetector.euclidean_distance_between_pose(self.pose.pose, stop_line_pose)
 
                     if car_dist < MAX_DISTANCE_TO_TL:
                         if light is not None:
-                            state = self.get_light_state(light)
+                            if IS_SIMULATOR and USE_ROS_TL_STATE:
+                                state = light.state
+                            else:
+                                state = self.get_light_state(light)
                             self.debug("Nearest TL State - {}".format(state))
                         else:
                             self.debug("No TL found as TL is none")
