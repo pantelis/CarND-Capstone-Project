@@ -21,7 +21,7 @@ UNKNOWN_TL_STATE = TrafficLight.UNKNOWN
 UNKNOWN_WP_IDX = -1
 IS_SIMULATOR = True
 USE_CV_CLASSIFIER = False
-USE_ROS_TL_STATE = True
+USE_ROS_TL_STATE = False
 
 
 class TLDetector(object):
