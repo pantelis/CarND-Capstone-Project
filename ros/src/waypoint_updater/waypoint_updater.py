@@ -196,7 +196,7 @@ class WaypointUpdater(object):
                 # red traffic light waypoint index is > the closest to the vehicle waypoint index.
                 waypoint_distance_to_next_waypoint = self.distance(final_waypoints, 0, i)
 
-                waypoint_velocity_mps = min(math.sqrt(starting_waypoint_velocity_mps*starting_waypoint_velocity_mps +
+                waypoint_velocity_mps = min(math.sqrt(starting_waypoint_velocity_mps**2 +
                                                       2 * self.acceleration_limit * waypoint_distance_to_next_waypoint),
                                             self.max_target_velocity_mps)
 
@@ -216,16 +216,19 @@ class WaypointUpdater(object):
                 # minimum stopping distance
                 self.minimum_stopping_distance = self.minimum_stopping_distance_calcularor(starting_waypoint_velocity_mps,
                                                                                            self.deceleration_limit)
-                # from 0 to min(relative, 200) velocity is decreasing
-                for i in range(0, min(relative_traffic_waypoint_index, LOOKAHEAD_WPS)):
 
-                    # Here we use the provided distance function that generates a non 0 distance when the
-                    # red traffic light waypoint index is > the closest to the vehicle waypoint index.
-                    waypoint_distance_to_next_traffic_light = self.distance(final_waypoints, i,
-                                                                            relative_traffic_waypoint_index)
+                traffic_light_distance = self.distance(final_waypoints, 0, relative_traffic_waypoint_index)
 
-                    # if vehicle can stop
-                    if waypoint_distance_to_next_traffic_light > self.minimum_stopping_distance:
+                # if vehicle can stop
+                if traffic_light_distance > self.minimum_stopping_distance:
+
+                    # from 0 to min(relative, 200) velocity is decreasing
+                    for i in range(0, min(relative_traffic_waypoint_index, LOOKAHEAD_WPS)):
+
+                        # Here we use the provided distance function that generates a non 0 distance when the
+                        # red traffic light waypoint index is > the closest to the vehicle waypoint index.
+                        waypoint_distance_to_next_traffic_light = self.distance(final_waypoints, i,
+                                                                                relative_traffic_waypoint_index)
 
                         # if the starting velocity is 0, just approach slowly the red traffic light
                         # this happens at the very beginning of the simulated track only.
@@ -235,16 +238,16 @@ class WaypointUpdater(object):
                             waypoint_velocity_mps = math.sqrt(max(starting_waypoint_velocity_mps**2 -
                                                               2 * self.deceleration_limit *
                                                               waypoint_distance_to_next_traffic_light, 0.))
-                    else:
-                        # if vehicle cant stop, continue with waypoint speed
-                        waypoint_velocity_mps = self.get_waypoint_velocity(final_waypoints.waypoints[i])
 
-                    self.set_look_ahead_waypoints_msg_velocity(final_waypoints, i, waypoint_velocity_mps)
+                        self.set_look_ahead_waypoints_msg_velocity(final_waypoints, i, waypoint_velocity_mps)
 
-                # from min(traffic_wp-car_wp, 200) to 200, velocity is 0.
-                for j in range(min(relative_traffic_waypoint_index, LOOKAHEAD_WPS), LOOKAHEAD_WPS):
-                    waypoint_velocity_mps = 0
-                    self.set_look_ahead_waypoints_msg_velocity(final_waypoints, j, waypoint_velocity_mps)
+                    # from min(traffic_wp-car_wp, 200) to 200, velocity is 0.
+                    for j in range(min(relative_traffic_waypoint_index, LOOKAHEAD_WPS), LOOKAHEAD_WPS):
+                        waypoint_velocity_mps = 0
+                        self.set_look_ahead_waypoints_msg_velocity(final_waypoints, j, waypoint_velocity_mps)
+                # else:
+                #     # if vehicle cant stop, continue with waypoint speed
+                #     waypoint_velocity_mps = self.get_waypoint_velocity(final_waypoints[0])
 
         return final_waypoints
 
