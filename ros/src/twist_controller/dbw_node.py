@@ -34,7 +34,8 @@ that we have created in the `__init__` function.
 
 class DBWNode(object):
 
-    #####################################################################################################
+    # ========================================================================================
+    # initialize
     def __init__(self):
         rospy.init_node('dbw_node')
 
@@ -49,8 +50,6 @@ class DBWNode(object):
         max_lat_accel = rospy.get_param('~max_lat_accel', 3.)
         max_steer_angle = rospy.get_param('~max_steer_angle', 8.)
 
-        self.simulation = rospy.get_param('~simulation', False)
-
         # publishers
         self.steer_pub = rospy.Publisher('/vehicle/steering_cmd', SteeringCmd, queue_size=1)
         self.throttle_pub = rospy.Publisher('/vehicle/throttle_cmd', ThrottleCmd, queue_size=1)
@@ -61,12 +60,12 @@ class DBWNode(object):
         self.target_linear_velocity = 0.0
         self.target_angular_velocity = 0.0
         self.dbw_enabled = False
-        self.sample_freq = 50.0 # 50Hz frequency
+        sample_freq = 50.0 # 50Hz frequency for Carla
 
         # TODO: Create `Controller` object
         # initialize control object
         kwargs = {
-            "sample_freq": self.sample_freq,
+            "sample_freq": sample_freq,
             "vehicle_mass": vehicle_mass,
             "fuel_capacity": fuel_capacity,
             "brake_deadband": brake_deadband,
@@ -77,7 +76,6 @@ class DBWNode(object):
             "steer_ratio": steer_ratio,
             "max_lat_accel": max_lat_accel,
             "max_steer_angle": max_steer_angle,
-            "simulation": self.simulation
         }
         # initialize controller
         self.controller = Controller(**kwargs)
@@ -90,13 +88,12 @@ class DBWNode(object):
         # subscribe to DBW enable state (enable==autonomous mode, else manual driving)
         rospy.Subscriber('/vehicle/dbw_enabled', Bool, self.dbw_enabled_cb, queue_size=1)
 
-        self.loop()
+        self.loop(sample_freq)
 
-    #####################################################################################################
+    # ========================================================================================
     # define control loop
-    def loop(self):
-
-        rate = rospy.Rate(self.sample_freq) # 50Hz
+    def loop(self, sample_freq):
+        rate = rospy.Rate(sample_freq) # 50Hz for Carla
 
         # TODO: Get predicted throttle, brake, and steering using `twist_controller`
 
@@ -115,7 +112,7 @@ class DBWNode(object):
 
             rate.sleep()
 
-    #####################################################################################################
+    # ========================================================================================
     # publisher function
     def publish(self, throttle, brake, steer):
         tcmd = ThrottleCmd()
@@ -135,11 +132,12 @@ class DBWNode(object):
         bcmd.pedal_cmd = brake
         self.brake_pub.publish(bcmd)
 
-    #####################################################################################################
-    # define callback functions
+    # ========================================================================================
+    #  define callback functions
     def dbw_enabled_cb(self, msg):
         self.dbw_enabled = bool(msg.data)
 
+        #==== for debugging ====
         # if self.dbw_enabled:
         #     rospy.logwarn("Controller ENABLED")
         # else:
@@ -156,12 +154,12 @@ class DBWNode(object):
         # Yaw (angle about z-axis)
         self.target_angular_velocity = msg.twist.angular.z
 
-        # for debugging
+        # ==== for debugging ====
         # rospy.logwarn('angular-velocity: ' + str(msg.twist.angular.z))
         # rospy.logwarn("Linear Velocity: %.2f, Angular Velocity: %2f",
         #               self.target_linear_velocity, self.target_angular_velocity)
 
-###################################################################
-# main function call
+# ========================================================================================
+#  main function call
 if __name__ == '__main__':
     DBWNode()
