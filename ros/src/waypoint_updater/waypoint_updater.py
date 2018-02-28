@@ -73,7 +73,6 @@ class WaypointUpdater(object):
 
         # Traffic Light member variables
         self.num_traffic_lights = None
-        self.distance_to_next_traffic_light = 99999
         self.next_traffic_light_waypoint_index = None
         self.next_traffic_light_position = np.zeros([1, 3])  # for testing ideal traffic light
         self.next_traffic_light_state = 4  # Unknown initial state as defined in the TrafficLight.msg
@@ -81,9 +80,7 @@ class WaypointUpdater(object):
         # Trajectory parameters
         self.deceleration_limit = abs(rospy.get_param('~decel_limit', -5))  # positive deceleration limit
         self.acceleration_limit = rospy.get_param('~accel_limit', 1.)
-        self.nominal_velocity_mps = self.kmph2mps(rospy.get_param('/waypoint_loader/velocity'))
-        self.velocity_target_mps = 0
-        self.current_velocity_mps = 0
+        self.max_target_velocity_mps = self.kmph2mps(rospy.get_param('/waypoint_loader/velocity'))
         self.minimum_stopping_distance = 0
 
         # Subscribers
@@ -109,6 +106,8 @@ class WaypointUpdater(object):
         # Publisher
         # Publish a list of waypoints ahead of the car with target velocities to the /final_waypoints topic.
         self.final_waypoints_pub = rospy.Publisher('final_waypoints', Lane, queue_size=1)
+
+        rate = rospy.Rate(50)
 
         rospy.spin()
 
@@ -161,18 +160,9 @@ class WaypointUpdater(object):
         if self.next_traffic_light_waypoint_index is not None and self.base_waypoints_topic_msg is not None and \
            self.closest_to_vehicle_waypoint_index is not None:
 
-            # self.final_waypoints = self.base_waypoints_topic_msg.waypoints[
-            #                        self.closest_to_vehicle_waypoint_index: self.closest_to_vehicle_waypoint_index +
-            #                                                                LOOKAHEAD_WPS + 1]
-
             self.final_waypoints = self.trajectory_generation(self.base_waypoints_topic_msg.waypoints,
                                                               self.closest_to_vehicle_waypoint_index,
                                                               self.next_traffic_light_waypoint_index)
-
-            self.velocity_target_mps = self.nominal_velocity_mps
-            if self.final_waypoints:
-                for i in range(LOOKAHEAD_WPS):
-                    self.set_look_ahead_waypoints_msg_velocity(self.final_waypoints, i, self.velocity_target_mps)
 
             self.final_waypoints_publisher()
     # ========================================================================================================
@@ -189,91 +179,72 @@ class WaypointUpdater(object):
 
         # rospy.loginfo("Trajectory Generation function")
 
-        # create the look_ahead waypoints considering the wrap around in closed loop tracks
-        # for i in range(0, LOOKAHEAD_WPS):
-        #     self.final_waypoints_topic_msg.waypoints[i] = base_waypoints_topic_msg_waypoints[
-        #             (closest_to_vehicle_waypoint_index + i) % self.num_waypoints]
-        #
-        # final_waypoints = []
-        # for i in range(0, LOOKAHEAD_WPS):
-        #     final_waypoints.append(base_waypoints_topic_msg_waypoints[
-        #             (closest_to_vehicle_waypoint_index + i) % self.num_waypoints])
-
-
-        # # minimum stopping distance - to be compared against the distance from the traffic light
-        # self.minimum_stopping_distance = self.minimum_stopping_distance_calcularor(self.current_velocity_mps,
-        #                                                                            self.deceleration_limit)
-        #
-        # # if the next red traffic light is beyond the traffic light detection distance
-        # # (parameter in td_detector set currently to 100m) the tl_detector will produce a -1 as the light waypoint index
         final_waypoints = []
+        for i in range(0, LOOKAHEAD_WPS):
+            final_waypoints.append(base_waypoints_topic_msg_waypoints[
+                                       (closest_to_vehicle_waypoint_index + i) % self.num_waypoints])
+
+        # starting waypoint velocity is the current waypoint velocity
+        starting_waypoint_velocity_mps = self.get_waypoint_velocity(final_waypoints[0])
+
+        # if the next red traffic light is beyond the traffic light detection distance
+        # (parameter in td_detector set currently to 100m) the tl_detector will produce a -1 as the light waypoint index
         if next_traffic_light_waypoint_index == -1:
 
-            final_waypoints = self.base_waypoints_topic_msg.waypoints[
-                              self.closest_to_vehicle_waypoint_index: self.closest_to_vehicle_waypoint_index +
-                                                                      LOOKAHEAD_WPS + 1]
+            for i in range(0, LOOKAHEAD_WPS):
+                # Here we use the provided distance function that generates a non 0 distance when the
+                # red traffic light waypoint index is > the closest to the vehicle waypoint index.
+                waypoint_distance_to_next_waypoint = self.distance(final_waypoints, 0, i)
 
-        #
-        #     self.distance_to_next_traffic_light = 99999
-        #
-        #     # target is the nominal velocity [retrieved by the ROS parameter server]
-        #     self.velocity_target_mps = self.nominal_velocity_mps
-        #
-        #     # the waypoint velocity
-        #     starting_waypoint_velocity_mps = self.current_velocity_mps
-        #
-        #     for i in range(0, LOOKAHEAD_WPS):
-        #         # Here we use the provided distance function that generates a non 0 distance when the
-        #         # red traffic light waypoint index is > the closest to the vehicle waypoint index.
-        #         waypoint_distance_to_next_waypoint = self.distance(self.final_waypoints_topic_msg.waypoints, 0, i)
-        #
-        #         waypoint_velocity_mps = min(math.sqrt(starting_waypoint_velocity_mps*starting_waypoint_velocity_mps +
-        #                                               2 * self.acceleration_limit * waypoint_distance_to_next_waypoint),
-        #                                     self.velocity_target_mps)
-        #
-        #         # waypoint_velocity_mps = self.get_waypoint_velocity((self.closest_to_vehicle_waypoint_index + i) % self.num_waypoints)
-        #
-        #         # print(waypoint_velocity_mps)
-        #         self.set_look_ahead_waypoints_msg_velocity(self.final_waypoints_topic_msg.waypoints, i,
-        #                                                    waypoint_velocity_mps)
-        #
-        # # If a red traffic light was found
-        # elif next_traffic_light_waypoint_index != -1:
-        #
-        #     relative_traffic_waypoint_index = abs(self.next_traffic_light_waypoint_index -
-        #                                           self.closest_to_vehicle_waypoint_index)
-        #
-        #     # and is within the planning horizon
-        #     if relative_traffic_waypoint_index <= LOOKAHEAD_WPS:
-        #
-        #         self.velocity_target_mps = 0.  # at traffic light waypoint and beyond the target is set to 0
-        #
-        #         # the waypoint velocity
-        #         starting_waypoint_velocity_mps = self.current_velocity_mps
-        #
-        #         print("Distance to next traffic light = ", self.distance_to_next_traffic_light)
-        #
-        #         # from 0 to min(relative, 200) velocity is decreasing
-        #         for i in range(0, min(relative_traffic_waypoint_index, LOOKAHEAD_WPS)):
-        #
-        #             # Here we use the provided distance function that generates a non 0 distance when the
-        #             # red traffic light waypoint index is > the closest to the vehicle waypoint index.
-        #             waypoint_distance_to_next_traffic_light = self.distance(self.base_waypoints_topic_msg.waypoints, i,
-        #                                                                     self.next_traffic_light_waypoint_index)
-        #
-        #             waypoint_velocity_mps = math.sqrt(starting_waypoint_velocity_mps*starting_waypoint_velocity_mps -
-        #                                               2 * self.deceleration_limit * waypoint_distance_to_next_traffic_light)
-        #
-        #             self.set_look_ahead_waypoints_msg_velocity(self.final_waypoints_topic_msg.waypoints, i,
-        #                                                        waypoint_velocity_mps)
-        #
-        #         # from min(traffic_wp-car_wp, 200) to 200 velocity is 0.
-        #         for j in range(min(relative_traffic_waypoint_index, LOOKAHEAD_WPS), LOOKAHEAD_WPS):
-        #             waypoint_velocity_mps = 0
-        #             self.set_look_ahead_waypoints_msg_velocity(self.final_waypoints_topic_msg.waypoints, j,
-        #                                                        waypoint_velocity_mps)
-        #     else:
-        #         print("Red light outside of planning horizon")
+                waypoint_velocity_mps = min(math.sqrt(starting_waypoint_velocity_mps*starting_waypoint_velocity_mps +
+                                                      2 * self.acceleration_limit * waypoint_distance_to_next_waypoint),
+                                            self.max_target_velocity_mps)
+
+                self.set_look_ahead_waypoints_msg_velocity(final_waypoints, i, waypoint_velocity_mps)
+
+        # If a red traffic light was found
+        elif next_traffic_light_waypoint_index != -1:
+
+            relative_traffic_waypoint_index = (next_traffic_light_waypoint_index - closest_to_vehicle_waypoint_index) % LOOKAHEAD_WPS
+
+            # If red traffic light is within the planning horizon
+            if relative_traffic_waypoint_index <= LOOKAHEAD_WPS:
+
+                # starting waypoint velocity is the current waypoint velocity
+                starting_waypoint_velocity_mps = self.get_waypoint_velocity(final_waypoints[0])
+
+                # minimum stopping distance
+                self.minimum_stopping_distance = self.minimum_stopping_distance_calcularor(starting_waypoint_velocity_mps,
+                                                                                           self.deceleration_limit)
+                # from 0 to min(relative, 200) velocity is decreasing
+                for i in range(0, min(relative_traffic_waypoint_index, LOOKAHEAD_WPS)):
+
+                    # Here we use the provided distance function that generates a non 0 distance when the
+                    # red traffic light waypoint index is > the closest to the vehicle waypoint index.
+                    waypoint_distance_to_next_traffic_light = self.distance(final_waypoints, i,
+                                                                            relative_traffic_waypoint_index)
+
+                    # if vehicle can stop
+                    if waypoint_distance_to_next_traffic_light > self.minimum_stopping_distance:
+
+                        # if the starting velocity is 0, just approach slowly the red traffic light
+                        # this happens at the very beginning of the simulated track only.
+                        if starting_waypoint_velocity_mps < 0.1:
+                            waypoint_velocity_mps = 1.
+                        else:
+                            waypoint_velocity_mps = math.sqrt(max(starting_waypoint_velocity_mps**2 -
+                                                              2 * self.deceleration_limit *
+                                                              waypoint_distance_to_next_traffic_light, 0.))
+                    else:
+                        # if vehicle cant stop, continue with waypoint speed
+                        waypoint_velocity_mps = self.get_waypoint_velocity(final_waypoints.waypoints[i])
+
+                    self.set_look_ahead_waypoints_msg_velocity(final_waypoints, i, waypoint_velocity_mps)
+
+                # from min(traffic_wp-car_wp, 200) to 200, velocity is 0.
+                for j in range(min(relative_traffic_waypoint_index, LOOKAHEAD_WPS), LOOKAHEAD_WPS):
+                    waypoint_velocity_mps = 0
+                    self.set_look_ahead_waypoints_msg_velocity(final_waypoints, j, waypoint_velocity_mps)
 
         return final_waypoints
 
@@ -295,11 +266,12 @@ class WaypointUpdater(object):
         detected by the tl_detector module.
         """
 
-        rospy.logwarn("Traffic light callback {}".format(msg))
+        #rospy.logwarn("Traffic light callback {}".format(msg))
 
         self.next_traffic_light_waypoint_index = msg.data
+        print self.next_traffic_light_waypoint_index
 
-        rospy.logwarn("Traffic light callback {}".format(self.next_traffic_light_waypoint_index))
+        #rospy.logwarn("Traffic light callback {}".format(self.next_traffic_light_waypoint_index))
 
     # ============================================================================================
     def final_waypoints_publisher(self):
