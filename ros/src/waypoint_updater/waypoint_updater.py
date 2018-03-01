@@ -44,7 +44,7 @@ TODO (for Yousuf and Aaron): Stopline location for each traffic light.
 '''
 
 # GLOBAL VARIABLES
-LOOKAHEAD_WPS = 200  # Number of waypoints we will publish. You can change this number
+LOOKAHEAD_WPS = 100  # Number of waypoints we will publish. You can change this number
 IDEAL_LIGHT_DETECTION = False  # Turns on or off the ideal traffic light detection.
 
 
@@ -196,14 +196,12 @@ class WaypointUpdater(object):
                 # red traffic light waypoint index is > the closest to the vehicle waypoint index.
                 waypoint_distance_to_next_waypoint = self.distance(final_waypoints, 0, i)
 
-                waypoint_velocity_mps = min(math.sqrt(starting_waypoint_velocity_mps**2 +
-                                                      2 * self.acceleration_limit * waypoint_distance_to_next_waypoint),
-                                            self.max_target_velocity_mps)
+                waypoint_velocity_mps = 11
 
                 self.set_look_ahead_waypoints_msg_velocity(final_waypoints, i, waypoint_velocity_mps)
 
         # If a red traffic light was found
-        elif next_traffic_light_waypoint_index != -1:
+        else:
 
             relative_traffic_waypoint_index = (next_traffic_light_waypoint_index - closest_to_vehicle_waypoint_index) % LOOKAHEAD_WPS
 
@@ -232,12 +230,10 @@ class WaypointUpdater(object):
 
                         # if the starting velocity is 0, just approach slowly the red traffic light
                         # this happens at the very beginning of the simulated track only.
-                        if starting_waypoint_velocity_mps < 0.1:
-                            waypoint_velocity_mps = 1.
-                        else:
-                            waypoint_velocity_mps = math.sqrt(max(starting_waypoint_velocity_mps**2 -
-                                                              2 * self.deceleration_limit *
-                                                              waypoint_distance_to_next_traffic_light, 0.))
+                        # if starting_waypoint_velocity_mps < 0.1:
+                        #     waypoint_velocity_mps = 1.
+                        # else:
+                        waypoint_velocity_mps = 0
 
                         self.set_look_ahead_waypoints_msg_velocity(final_waypoints, i, waypoint_velocity_mps)
 
