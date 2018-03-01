@@ -22,12 +22,12 @@ UNKNOWN_TL_STATE = TrafficLight.UNKNOWN
 UNKNOWN_WP_IDX = -1
 IS_SIMULATOR = True
 USE_CV_CLASSIFIER = False
-USE_ROS_TL_STATE = True
+# USE_ROS_TL_STATE = False
 
 
 class TLDetector(object):
     def __init__(self):
-        rospy.init_node('tl_detector', log_level=rospy.DEBUG)
+        rospy.init_node('tl_detector', log_level=rospy.INFO)
 
         self.pose = None
         self.waypoints = None
@@ -248,14 +248,14 @@ class TLDetector(object):
                                                    self.waypoints.waypoints[light_waypoint].pose.pose.position.x,
                                                    self.waypoints.waypoints[light_waypoint].pose.pose.position.x)
 
-                if car_dist < min_dist and (light_waypoint - car_position > 0) and (light_waypoint - car_position < 125):
+                if car_dist < min_dist and (light_waypoint - car_position > 0) and (light_waypoint - car_position < 90): # 125
                     light = current_light
                     light_wp = light_waypoint
                     k = i
 
         if light:
-            state = self.lights[k].state
-            # state = self.get_light_state(light)
+            # state = self.lights[k].state
+            state = self.get_light_state(light)
             return light_wp, state
         return -1, TrafficLight.UNKNOWN
 

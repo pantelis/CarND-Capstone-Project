@@ -9,8 +9,8 @@ ONE_MPH = 0.44704
 # define parameters to tune
 # PID gains for velocity control
 vKP =  0.85 # 0.065 #0.005 #0.065 #5.0# 0.1 #10
-vKI = 0.005 # 0.00005 #0.05 #0.00005# 0.005
-vKD = 0.5 #0.2 # 0.0002 #0.0 #0.002# 0.001# 1
+vKI = 0.05 # 0.00005 #0.05 #0.00005# 0.005
+vKD = 0.0 #0.2 # 0.0002 #0.0 #0.002# 0.001# 1
 
 THROTTLE_LPF_TAU = 0.5
 THROTTLE_LPF_TS = 0.5
@@ -118,7 +118,8 @@ class Controller(object):
                 throttle = 0.0
 
                 if brake >1: # this is optional, need to test
-                    brake = 1
+                    brake = min(90, brake * self.max_brake_torque)
+                    # brake = self.filter_brake.filt(brake)
 
             else: # if throttle is positive
                 throttle = self.filter_throttle.filt(throttle)

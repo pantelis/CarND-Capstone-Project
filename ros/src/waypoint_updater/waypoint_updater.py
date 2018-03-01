@@ -44,7 +44,7 @@ TODO (for Yousuf and Aaron): Stopline location for each traffic light.
 '''
 
 # GLOBAL VARIABLES
-LOOKAHEAD_WPS = 100  # Number of waypoints we will publish. You can change this number
+LOOKAHEAD_WPS = 200  # Number of waypoints we will publish. You can change this number
 IDEAL_LIGHT_DETECTION = False  # Turns on or off the ideal traffic light detection.
 
 
@@ -117,7 +117,7 @@ class WaypointUpdater(object):
         Waypoints callback. Populates required 2D arrays.
         :param Lane msg: message containing the waypoints of the track that the vehicle must follow.
         """
-        rospy.loginfo("Waypoints Callback - Called Once")
+        # rospy.loginfo("Waypoints Callback - Called Once")
         # rospy.loginfo(msg.waypoints)
 
         # store the message that is only transmitted once.
@@ -202,16 +202,19 @@ class WaypointUpdater(object):
 
                 self.set_look_ahead_waypoints_msg_velocity(final_waypoints, i, waypoint_velocity_mps)
 
+
+        elif next_traffic_light_waypoint_index != -1:
+
         # If a red traffic light was found
-        else:
+        # else:
 
             relative_traffic_waypoint_index = (next_traffic_light_waypoint_index - closest_to_vehicle_waypoint_index) % LOOKAHEAD_WPS
-            print(relative_traffic_waypoint_index)
+            # print(relative_traffic_waypoint_index)
 
-            # TODO: fix this
-            if relative_traffic_waypoint_index >= 8:
-                relative_traffic_waypoint_index = relative_traffic_waypoint_index - 5
-                print(str('after -8 =') + str(relative_traffic_waypoint_index))
+            # # TODO: fix this
+            # if relative_traffic_waypoint_index >= 8:
+            #     relative_traffic_waypoint_index = relative_traffic_waypoint_index - 5
+            #     # print(str('after -8 =') + str(relative_traffic_waypoint_index))
 
             # If red traffic light is within the planning horizon
             if relative_traffic_waypoint_index <= LOOKAHEAD_WPS:
@@ -278,7 +281,7 @@ class WaypointUpdater(object):
         #rospy.logwarn("Traffic light callback {}".format(msg))
 
         self.next_traffic_light_waypoint_index = msg.data
-        print self.next_traffic_light_waypoint_index
+        # print ("default: " + str(self.next_traffic_light_waypoint_index))
 
         #rospy.logwarn("Traffic light callback {}".format(self.next_traffic_light_waypoint_index))
 
@@ -305,8 +308,8 @@ class WaypointUpdater(object):
 
     def closest_waypoint_estimator(self, base_waypoints_topic_msg_waypoints, current_pose_position):
 
-        if len(base_waypoints_topic_msg_waypoints) == 0:
-            rospy.loginfo("len(base_waypoints_topic_msg_waypoints) == 0")
+        # if len(base_waypoints_topic_msg_waypoints) == 0:
+        #     rospy.loginfo("len(base_waypoints_topic_msg_waypoints) == 0")
 
         closest_dist = 99999.
         closest_to_vehicle_waypoint_index = 0
@@ -442,8 +445,8 @@ class WaypointUpdater(object):
         return meters_per_second * 2.23694
 
     # ============================================================================================
-    def debug(self, message):
-        rospy.logdebug('WAYPOINT UPDATER: ' + message)
+    # def debug(self, message):
+    #     rospy.logdebug('WAYPOINT UPDATER: ' + message)
 
 
 # ============================================================================================
