@@ -2,10 +2,10 @@
 
 This is a team effort that involved the following members (alphabetical order)
 
-1. Kinshuk Chandra (Traffic Light detector package)
-2. Lance L (Classification model training) 
-3. Vikulp Mirsha (Twist controller package)
-4. Pantelis Monogioudis (Team Lead and Path Planner / Waypoint updater package)
+1. Kinshuk Chandra (kinshuk.ram@gmail.com) - Traffic Light detector package)
+2. Lance L (blitzbeat@gmail.com) - Classification model training) 
+3. Vikulp Mirsha (vikalp.mishra@gmail.com) - Twist controller package)
+4. Pantelis Monogioudis (monogioudis@yahoo.com) - Team Lead and Path Planner / Waypoint updater package)
 
 
 [carla]: ./imgs/carla.png "Carla Self-Driving Car"
