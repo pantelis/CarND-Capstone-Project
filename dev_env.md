@@ -1,4 +1,4 @@
-#### PyCharm-Pro based Dev Environment (MACOS host and Virtualbox VM).
+## PyCharm-Pro based Dev Environment (MACOS host and Virtualbox VM).
 We are following the steps [here](https://www.jetbrains.com/help/pycharm/remote-debugging.html) but adapt them for this project.
 After cloning the project and opening it up in PyCharm Pro you need to:
 
