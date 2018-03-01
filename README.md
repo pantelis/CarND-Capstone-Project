@@ -21,5 +21,4 @@ light classification.
 ### Development Environment Setup
 
 Our setup involves remote debugging of the code running in the ROS Ubuntu VM from a host OS that also runs the simulator.
-Detailed instructions for PyCharm are ./dev_end.md 
-
+Detailed instructions for PyCharm are in https://github.com/pantelis/CarND-Capstone-Project/blob/master/dev_env.md. 
