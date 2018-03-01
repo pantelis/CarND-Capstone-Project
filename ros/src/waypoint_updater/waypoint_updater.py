@@ -44,7 +44,7 @@ TODO (for Yousuf and Aaron): Stopline location for each traffic light.
 '''
 
 # GLOBAL VARIABLES
-LOOKAHEAD_WPS = 200  # Number of waypoints we will publish. You can change this number
+LOOKAHEAD_WPS = 100  # Number of waypoints we will publish. You can change this number
 IDEAL_LIGHT_DETECTION = False  # Turns on or off the ideal traffic light detection.
 
 
@@ -206,6 +206,12 @@ class WaypointUpdater(object):
         elif next_traffic_light_waypoint_index != -1:
 
             relative_traffic_waypoint_index = (next_traffic_light_waypoint_index - closest_to_vehicle_waypoint_index) % LOOKAHEAD_WPS
+            print(relative_traffic_waypoint_index)
+
+            # TODO: fix this
+            if relative_traffic_waypoint_index >= 8:
+                relative_traffic_waypoint_index = relative_traffic_waypoint_index - 5
+                print(str('after -8 =') + str(relative_traffic_waypoint_index))
 
             # If red traffic light is within the planning horizon
             if relative_traffic_waypoint_index <= LOOKAHEAD_WPS:
