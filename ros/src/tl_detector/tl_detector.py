@@ -20,7 +20,6 @@ NODE_NAME = "[TL_DETECTOR]: "
 MAX_DISTANCE_TO_TL = 100
 UNKNOWN_TL_STATE = TrafficLight.UNKNOWN
 UNKNOWN_WP_IDX = -1
-IS_SIMULATOR = True
 USE_CV_CLASSIFIER = False
 # USE_ROS_TL_STATE = False
 
@@ -63,10 +62,12 @@ class TLDetector(object):
             self.debug("Curr directory is " + curr_dir)
             labels_path = curr_dir + "/light_classification/models/label_map.pbtxt"
 
-
+            IS_SIMULATOR = rospy.get_param('~is_simulator')
             if IS_SIMULATOR:
+                self.debug("Running in simulator")
                 model_path = curr_dir + "/light_classification/models/sim/frozen_inference_graph.pb"
             else:
+                self.debug("Running on site")
                 model_path = curr_dir + "/light_classification/models/real/frozen_inference_graph.pb"
 
             self.light_classifier = TLClassifier(model_path, labels_path)
