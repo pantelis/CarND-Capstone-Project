@@ -196,14 +196,22 @@ class WaypointUpdater(object):
                 # red traffic light waypoint index is > the closest to the vehicle waypoint index.
                 waypoint_distance_to_next_waypoint = self.distance(final_waypoints, 0, i)
 
-                waypoint_velocity_mps = 11
+                waypoint_velocity_mps = min(math.sqrt(starting_waypoint_velocity_mps**2 +
+                                                      2 * self.acceleration_limit * waypoint_distance_to_next_waypoint),
+                                            self.max_target_velocity_mps)
 
                 self.set_look_ahead_waypoints_msg_velocity(final_waypoints, i, waypoint_velocity_mps)
 
         # If a red traffic light was found
-        else:
+        elif next_traffic_light_waypoint_index != -1:
 
             relative_traffic_waypoint_index = (next_traffic_light_waypoint_index - closest_to_vehicle_waypoint_index) % LOOKAHEAD_WPS
+            print(relative_traffic_waypoint_index)
+
+            # TODO: fix this
+            if relative_traffic_waypoint_index >= 8:
+                relative_traffic_waypoint_index = relative_traffic_waypoint_index - 5
+                print(str('after -8 =') + str(relative_traffic_waypoint_index))
 
             # If red traffic light is within the planning horizon
             if relative_traffic_waypoint_index <= LOOKAHEAD_WPS:
@@ -230,10 +238,12 @@ class WaypointUpdater(object):
 
                         # if the starting velocity is 0, just approach slowly the red traffic light
                         # this happens at the very beginning of the simulated track only.
-                        # if starting_waypoint_velocity_mps < 0.1:
-                        #     waypoint_velocity_mps = 1.
-                        # else:
-                        waypoint_velocity_mps = 0
+                        if starting_waypoint_velocity_mps < 0.1:
+                            waypoint_velocity_mps = 1.
+                        else:
+                            waypoint_velocity_mps = math.sqrt(max(starting_waypoint_velocity_mps**2 -
+                                                              2 * self.deceleration_limit *
+                                                              waypoint_distance_to_next_traffic_light, 0.))
 
                         self.set_look_ahead_waypoints_msg_velocity(final_waypoints, i, waypoint_velocity_mps)
 
