@@ -203,7 +203,7 @@ class WaypointUpdater(object):
                 self.set_look_ahead_waypoints_msg_velocity(final_waypoints, i, waypoint_velocity_mps)
 
         # If a red traffic light was found
-        elif next_traffic_light_waypoint_index != -1:
+        else:
 
             relative_traffic_waypoint_index = (next_traffic_light_waypoint_index - closest_to_vehicle_waypoint_index) % LOOKAHEAD_WPS
             print(relative_traffic_waypoint_index)
